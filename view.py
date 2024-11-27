@@ -2,34 +2,10 @@ import tkinter as tk
 from tkinter import filedialog
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
 import os
 
-'''def select_path(entry_field):
-    path = filedialog.askopenfilename()
-    entry_field.delete(0, tk.END)
-    entry_field.insert(0, path)
-    filename = find_filename(path)
-    label_name.config(text=("   File: " + filename))'''
-
-'''def get_path():
-    return path'''
-
-'''def find_filename(path):
-    return os.path.basename(path).split('/')[-1]'''
-
-'''def change_graph():
-    graph_disp = graph_select_var.get()
-    if graph_disp == "Intensity Graph":
-        pass
-    elif graph_disp == "Waveform Graph":
-        pass
-    elif graph_disp == "RT60 Low":
-        pass
-    elif graph_disp == "RT60 Medium":
-        pass
-    elif graph_disp == "RT60 High":
-        pass
-'''
+from matplotlib.pyplot import title
 
 
 class view:
@@ -46,32 +22,34 @@ class view:
         self.resonant_frequency = 0.0
         self.filename = ""
         self.location = ""
-        self.graph_types = ["Intensity Graph", "Waveform Graph", "RT60 Low", "RT60 Medium", "RT60 High", "RT60 Combined"]
+        self.graph_types = ["None","Intensity Graph", "Waveform Graph", "RT60 Low", "RT60 Medium", "RT60 High", "RT60 Combined"]
 
-        #Labels
+        #Label show file entry
         self.label = tk.Label(self.root, text="   File entry:")
         self.label.grid(column=0, row=1)
 
-        #
-        self.path = tk.Entry(self.root, width=50)
+        #Label that displays the file path
+        self.path = tk.Label(self.root, width=50)
         self.path.grid(column=1, row=1, columnspan=3)
 
-        #
-        self.file_button = tk.Button(self.root, text="Choose a file", command=lambda: select_path())
+        #Label: message to choose a file
+        self.file_button = tk.Button(self.root, text="Choose a file", command=lambda: self.select_path())
         self.file_button.grid(column=4, row=1)
 
-        self.label_name = tk.Label(self.root, text=("   File: " + self.filename))
-        self.label_name.grid(column=0, row=2, columnspan=4, sticky=('W'))
+        #Label filename
+        self.label_name = tk.Label(self.root, text=("   Filename: " + self.filename))
+        self.label_name.grid(column=0, row=2, columnspan=4, sticky='W')
 
-        self.graph_select_var = tk.StringVar(value=self.graph_types[0])
-        self.graph_select = tk.OptionMenu(self.root, self.graph_select_var, *self.graph_types, command=self.change_graph())
-        self.graph_select.grid(column=1, row=3, columnspan=4, sticky=('W'), pady = 10)
-
-        self.fig,self.ax = plt.subplots()
-        self.canvas = FigureCanvasTkAgg(self.fig,self.root)
-        self.canvas.draw()
+        # Creating the framework for the plots
+        self.fig, self.ax = plt.subplots()
+        self.canvas = FigureCanvasTkAgg(self.fig, self.root)
         self.widget = self.canvas.get_tk_widget()
-        self.widget.grid(column=1, row=4, columnspan=4, sticky=('W'))
+        self.widget.grid(column=1, row=4, columnspan=4, sticky='W')
+
+        #dropdown to change the plot
+        self.graph_select_var = tk.StringVar(value=self.graph_types[0])
+        self.graph_select = tk.OptionMenu(self.root, self.graph_select_var, *self.graph_types, command=self.change_graph)
+        self.graph_select.grid(column=1, row=3, columnspan=4, sticky='W', pady = 10)
 
         #Label to display file length
         self.label_file_length = tk.Label(self.root, text=("File Length: " + str(self.filelength) + "s"))
@@ -86,33 +64,40 @@ class view:
         self.label_file_rt60_diff.grid(column=1, row=7, columnspan=4, sticky='W')
         self.root.mainloop()
 
+    #Function to select a path on button push
     def select_path(self):
         self.location = filedialog.askopenfilename()
-        self.path.delete(0, tk.END)
-        self.path.insert(0, self.location )
+        self.path.config(text=self.location)
         self.filename = self.find_filename()
-        self.label_name.config(text=("   File: " + self.filename))
+        self.label_name.config(text=("   Filename: " + self.filename))
+        self.get_path()
+        self.change_graph()
 
     def get_path(self):
-        return self.path
+        return self.location
 
     def find_filename(self):
         return os.path.basename(self.location ).split('/')[-1]
 
-    def change_graph(self):
-        graph_disp = self.graph_select_var.get()
-        if graph_disp == "Intensity Graph":
-            pass
-        elif graph_disp == "Waveform Graph":
-            pass
-        elif graph_disp == "RT60 Low":
-            pass
-        elif graph_disp == "RT60 Medium":
-            pass
-        elif graph_disp == "RT60 High":
-            pass
+    def change_graph(self, option):
 
-hello = view()
+        if option == "None":
+            print("HELP!1")
+
+        elif option == "Intensity Graph":
+            print("HELP!2")
+
+        elif option == "Waveform Graph":
+            pass
+        elif option == "RT60 Low":
+            pass
+        elif option == "RT60 Medium":
+            pass
+        elif option == "RT60 High":
+            pass
+        self.canvas.draw()
+
+
 
 
 
