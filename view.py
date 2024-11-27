@@ -33,7 +33,7 @@ class view:
         self.path.grid(column=1, row=1, columnspan=3)
 
         #Label: message to choose a file
-        self.file_button = tk.Button(self.root, text="Choose a file", command=lambda: self.select_path())
+        self.file_button = tk.Button(self.root, text="Choose a file", command=self.select_path)
         self.file_button.grid(column=4, row=1)
 
         #Label filename
@@ -45,6 +45,7 @@ class view:
         self.canvas = FigureCanvasTkAgg(self.fig, self.root)
         self.widget = self.canvas.get_tk_widget()
         self.widget.grid(column=1, row=4, columnspan=4, sticky='W')
+        self.change_graph("None")
 
         #dropdown to change the plot
         self.graph_select_var = tk.StringVar(value=self.graph_types[0])
@@ -71,7 +72,6 @@ class view:
         self.filename = self.find_filename()
         self.label_name.config(text=("   Filename: " + self.filename))
         self.get_path()
-        self.change_graph()
 
     def get_path(self):
         return self.location
@@ -80,24 +80,46 @@ class view:
         return os.path.basename(self.location ).split('/')[-1]
 
     def change_graph(self, option):
-
+        self.ax.clear()
         if option == "None":
-            print("HELP!1")
+            self.ax.plot()
+            plt.title("No Data")
 
         elif option == "Intensity Graph":
-            print("HELP!2")
+
+            x = np.arange(0, np.pi * 2, 0.01)
+            y = np.sin(x * 1)
+
+            plt.plot(x, y)
+            plt.title("Sine Wave!!")
 
         elif option == "Waveform Graph":
-            pass
+            x = np.arange(0, np.pi * 2, 0.01)
+            y = np.sin(x * 2)
+
+            plt.plot(x, y)
+            plt.title("Sine Wave!!")
         elif option == "RT60 Low":
-            pass
+            x = np.arange(0, np.pi * 2, 0.01)
+            y = np.sin(x * 3)
+
+            plt.plot(x, y)
+            plt.title("Sine Wave!!")
         elif option == "RT60 Medium":
-            pass
+            x = np.arange(0, np.pi * 2, 0.01)
+            y = np.sin(x * 4)
+
+            plt.plot(x, y)
+            plt.title("Sine Wave!!")
         elif option == "RT60 High":
-            pass
+            x = np.arange(0, np.pi * 2, 0.01)
+            y = np.sin(x * 5)
+
+            plt.plot(x, y)
+            plt.title("Sine Wave!!")
         self.canvas.draw()
 
-
+test = view()
 
 
 
