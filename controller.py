@@ -61,7 +61,7 @@ class Controller:
         """
 
         # Ensure audio data is loaded
-        if self.model.audio_data is None:
+        if self.model.data is None:
 
             raise ValueError("No audio data loaded. Please load an audio file first.")
         
