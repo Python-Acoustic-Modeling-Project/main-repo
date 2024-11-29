@@ -1,125 +1,117 @@
+# Include libraries
 import tkinter as tk
-from tkinter import filedialog
-import matplotlib.pyplot as plt
+from tkinter import filedialog, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import numpy as np
-import os
+import matplotlib.pyplot as plt
 
-from matplotlib.pyplot import title
+# View class
+class View:
 
+    # Class initialization
+    def __init__(self, root, controller):
+        """
+        Initialize the GUI view for the audio analysis application.
+        """
 
-class view:
-    def __init__(self):
-        self.root = tk.Tk()
-        self.root.title("SPIDAM")
-        self.root.grid()
-        self.root.geometry("800x800")
+        # Set instance variables
+        self.controller = controller
+        self.root = root
+        self.root.geometry("900x700")
+        self.root.resizable(False, False)
 
-        #initialize data variables
-        self.rt60 = 0.0
-        self.filelength = 0.0
-        self.rt_difference = 0.0
-        self.resonant_frequency = 0.0
-        self.filename = ""
-        self.location = ""
-        self.graph_types = ["None","Intensity Graph", "Waveform Graph", "RT60 Low", "RT60 Medium", "RT60 High", "RT60 Combined"]
+        # Title
+        tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(pady=10)
 
-        #Label show file entry
-        self.label = tk.Label(self.root, text="   File entry:")
-        self.label.grid(column=0, row=1)
+        # File import selection
+        self.file_label = tk.Label(root, text="No file selected", fg="gray", font=("Arial", 12))
+        self.file_label.pack()
 
-        #Label that displays the file path
-        self.path = tk.Label(self.root, width=50)
-        self.path.grid(column=1, row=1, columnspan=3)
+        self.import_button = tk.Button(root, text="Import Audio File", command=self.load_file, font=("Arial", 12))
+        self.import_button.pack(pady=10)
 
-        #Label: message to choose a file
-        self.file_button = tk.Button(self.root, text="Choose a file", command=self.select_path)
-        self.file_button.grid(column=4, row=1)
+        # Cleaning tools selection
+        self.clean_button = tk.Button(root, text="Clean Data", command=self.clean_data, font=("Arial", 12), state="disabled")
+        self.clean_button.pack(pady=10)
 
-        #Label filename
-        self.label_name = tk.Label(self.root, text=("   Filename: " + self.filename))
-        self.label_name.grid(column=0, row=2, columnspan=4, sticky='W')
+        # Visualization selection
+        tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).pack(pady=10)
 
-        # Creating the framework for the plots
-        self.fig, self.ax = plt.subplots()
-        self.canvas = FigureCanvasTkAgg(self.fig, self.root)
-        self.widget = self.canvas.get_tk_widget()
-        self.widget.grid(column=1, row=4, columnspan=4, sticky='W')
-        self.change_graph("None")
+        self.fig, self.ax = plt.subplots(figsize=(8, 4))
+        self.ax.set_title("Audio Data Visualization")
+        self.ax.set_xlabel("Time")
+        self.ax.set_ylabel("Amplitude")
+        self.canvas = FigureCanvasTkAgg(self.fig, master=root)
+        self.canvas_widget = self.canvas.get_tk_widget()
+        self.canvas_widget.pack()
 
-        #dropdown to change the plot
-        self.graph_select_var = tk.StringVar(value=self.graph_types[0])
-        self.graph_select = tk.OptionMenu(self.root, self.graph_select_var, *self.graph_types, command=self.change_graph)
-        self.graph_select.grid(column=1, row=3, columnspan=4, sticky='W', pady = 10)
+        # Analysis Results section
+        self.results_frame = tk.Frame(root)
+        self.results_frame.pack(pady=10)
 
-        #Label to display file length
-        self.label_file_length = tk.Label(self.root, text=("File Length: " + str(self.filelength) + "s"))
-        self.label_file_length.grid(column=1, row=5, columnspan=4, sticky=('W'))
+        self.length_label = tk.Label(self.results_frame, text="Length: --- seconds", font=("Arial", 12))
+        self.length_label.grid(row=0, column=0, padx=10)
 
-        #Label to display resonant frequency
-        self.label_file_Resonant_Frequency = tk.Label(self.root, text=("Resonant Frequency: " + str(self.resonant_frequency) + "Hz"))
-        self.label_file_Resonant_Frequency.grid(column=1, row=6, columnspan=4, sticky=('W'))
+        self.rt60_label = tk.Label(self.results_frame, text="RT60: -- seconds", font=("Arial", 12))
+        self.rt60_label.grid(row=0, column=1, padx=10)
 
-        #Label to display RT60 Difference
-        self.label_file_rt60_diff = tk.Label(self.root, text=("RT60 Difference: " + str(self.rt_difference) + "s"))
-        self.label_file_rt60_diff.grid(column=1, row=7, columnspan=4, sticky='W')
-        self.root.mainloop()
+        self.resonant_label = tk.Label(self.results_frame, text="Resonant Frequency: -- Hz", font=("Arial", 12))
+        self.resonant_label.grid(row=0, column=2, padx=10)
 
-    #Function to select a path on button push
-    def select_path(self):
-        self.location = filedialog.askopenfilename()
-        self.path.config(text=self.location)
-        self.filename = self.find_filename()
-        self.label_name.config(text=("   Filename: " + self.filename))
-        self.get_path()
+        # Action buttons
+        self.analyze_button = tk.Button(root, text="Analyze Audio", command=self.analyze_data, font=("Arial", 12), state="disabled")
+        self.analyze_button.pack(pady=10)
 
-    def get_path(self):
-        return self.location
+    # Load file
+    def load_file(self):
+        """
+        Handles the file import process. Calls the controller to load the file and updates the view.
+        """
 
-    def find_filename(self):
-        return os.path.basename(self.location ).split('/')[-1]
+        filepath = filedialog.askopenfilename(filetypes=[("Audio Files", "*.wav *.mp3 *.flac"), ("All Files", "*.*")])
 
-    def change_graph(self, option):
+        if filepath:
+
+            self.controller.load_file(filepath)
+            self.file_label.config(text=f"File: {filepath.split('/')[-1]}", fg="black")
+            self.clean_button.config(state="normal")
+            self.analyze_button.config(state="normal")
+
+    # Clean data
+    def clean_data(self):
+        """
+        Handles data cleaning via the controller.
+        """
+
+        try:  # attempt to do
+            
+            results = self.controller.analyze_data()
+            self.update_results(results)
+            self.update_visualization(results["waveform"])
+
+        except Exception as error:  # except if an exception arises
+
+            messagebox.showerror(f"Error: {error}")
+
+    # Update results
+    def update_results(self, results):
+        """
+        Updates the displayes analysis results.
+        """
+
+        self.length_label.config(text=f"Length: {results['length']:.2f} seconds")
+        self.rt60_label.config(text=f"RT60: {results['rt60']:.2f} seconds")
+        self.resonant_label.config(text=f"Resonant Frequency: {results['resonant_frequency']:.2f} Hz")
+
+    # Update visualization
+    def update_visualization(self, waveform):
+        """
+        Updates the waveform visualization.
+        """
+
         self.ax.clear()
-        if option == "None":
-            self.ax.plot()
-            plt.title("No Data")
-
-        elif option == "Intensity Graph":
-
-            x = np.arange(0, np.pi * 2, 0.01)
-            y = np.sin(x * 1)
-
-            plt.plot(x, y)
-            plt.title("Sine Wave!!")
-
-        elif option == "Waveform Graph":
-            x = np.arange(0, np.pi * 2, 0.01)
-            y = np.sin(x * 2)
-
-            plt.plot(x, y)
-            plt.title("Sine Wave!!")
-        elif option == "RT60 Low":
-            x = np.arange(0, np.pi * 2, 0.01)
-            y = np.sin(x * 3)
-
-            plt.plot(x, y)
-            plt.title("Sine Wave!!")
-        elif option == "RT60 Medium":
-            x = np.arange(0, np.pi * 2, 0.01)
-            y = np.sin(x * 4)
-
-            plt.plot(x, y)
-            plt.title("Sine Wave!!")
-        elif option == "RT60 High":
-            x = np.arange(0, np.pi * 2, 0.01)
-            y = np.sin(x * 5)
-
-            plt.plot(x, y)
-            plt.title("Sine Wave!!")
+        self.ax.plot(waveform, label="Waveform")
+        self.ax.legend()
+        self.ax.set_title("Audio Waveform")
+        self.ax.set_xlabel("Time")
+        self.ax.set_ylabel("Amplitude")
         self.canvas.draw()
-
-test = view()
-
-
-
