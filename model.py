@@ -25,6 +25,7 @@ class Model:
         """
         self.filepath = self.convert_to_wave(filepath)
         self.samplerate, self.data = wavfile.read(self.filepath)
+        self.spectrum, self.freq, self.t, self.im = plt.specgram(self.data, Fs=self.samplerate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
         self.file_format = "WAV"
 
     # Convert audio to WAV format
@@ -40,19 +41,6 @@ class Model:
             return output_filepath
         
         return filepath
-    
-    # Clean audio
-    def clean_audio(self):
-        """
-        Clean the loaded audio date (remove metadata, combine channels).
-        """
-        if self.data is None:
-
-            raise ValueError("No audio data loaded to clean.")
-        
-        if(len(self.data.shape) > 1):  # if stereo
-
-            self.data = np.mean(self.data, axis=1).astype(np.int16)
 
     # Calculate RT60 values
     def calculate_rt60(self):
@@ -83,46 +71,52 @@ class Model:
         freqs = np.fft.rfftfreq(len(self.data), 1 / self.samplerate)
         peak_idx = np.argmax(spectrum)
         return freqs[peak_idx]
-    
-    # Visualize waveform
-    def visualize_waveform(self):
+
+    def find_target_frequency(self, limit):
+        for x in self.freq:
+            if x > limit:
+                break
+        return x
+
+    def frequency_check(self, value):
+        global target_frequency
+        target_frequency = self.find_target_frequency(value)
+        index_of_frequency = np.where(self.freq == target_frequency)[0][0]
+        data_for_frequency = self.spectrum[index_of_frequency]
+        data_in_db_fun = 10 * np.log10(data_for_frequency)
+        return data_in_db_fun
+
+    def find_nearest_value(self,array, value):
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return array[idx]
+
+    def rt60_visualization(self, value):
         """
-        Create and display a waveform plot of the loaded audio data.
+        Find the data need for the visualization of the rt60 value at different frequencies.
         """
 
-        if self.data is None:
+        data_in_db = self.frequency_check(value)
 
-            raise ValueError("No audio data loaded to visualize.")
-        
-        time = np.linspace(0, len(self.data) / self.samplerate, num=len(self.data))
-        plt.figure()
-        plt.plot(time, self.data)
-        plt.title("Waveform")
-        plt.xlabel("Time (s)")
-        plt.ylabel("Amplitude")
-        plt.show()
+        # find max decidable value
+        idx_max = np.argmax(data_in_db)
+        max_dB = data_in_db[idx_max]
 
-    # Visualize RT60 bands
-    def visualize_rt60_bands(self, bands):
-        """
-        Visualize RT60 values across specified frequency bands.
-        """
+        # slice array from max value
+        sliced_array = data_in_db[idx_max:]
 
-        if self.data is None:
+        # max - 5 dB
+        max_5 = max_dB - 5
+        value_max_5 = self.find_nearest_value(sliced_array, max_5)
+        idx_max_5 = np.where(data_in_db == value_max_5)
 
-            raise ValueError("No audio data loaded to analyze.")
-        
-        # Declare empty list for RT60 bands
-        rt60s = []
+        # max - 25dB
+        max_25 = max_dB - 25
+        max_25 = self.find_nearest_value(sliced_array, max_25)
+        idx_max_25 = np.where(data_in_db == max_25)
 
-        # Iterate through bands, calculate RT60, and add to list
-        for band in bands:
+        # List to be returned storing the information needed to plot
+        plot_info = [self.t, data_in_db, self.t[idx_max], self.t[idx_max_5], self.t[idx_max_25],\
+                    data_in_db[idx_max], data_in_db[idx_max_5], data_in_db[idx_max_25]]
+        return plot_info
 
-            band_data = self.bandpass_filter(self.data, band[0], band[1])
-            rt60s.append(self.calculate_rt60())
-
-        plt.bar([f"{band[0]}-{band[1]} Hz" for band in bands], rt60s)
-        plt.title("RT60 by Frequency Band")
-        plt.xlabel("Frequency Band (Hz)")
-        plt.ylabel("RT60 (s)")
-        plt.show()

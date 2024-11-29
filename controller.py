@@ -76,7 +76,10 @@ class Controller:
             "length": len(self.model.data) / self.model.samplerate,
             "rt60": self.model.calculate_rt60(),
             "resonant_frequency": self.model.calculate_resonant_frequency(),
-            "waveform": self.model.data
+            "waveform": self.model.data,
+            "rt60_low": self.model.rt60_visualization(5),
+            "rt60_mid": self.model.rt60_visualization(1000),
+            "rt60_high": self.model.rt60_visualization(5000)
         }
 
         # Return results
