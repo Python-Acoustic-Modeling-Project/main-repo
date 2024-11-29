@@ -3,7 +3,7 @@ import librosa
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.signal import find_peaks
+from scipy.signal import find_peaks, butter, lfilter
 from scipy.io import wavfile
 import soundfile as sf
 
@@ -25,6 +25,7 @@ class Model:
         """
         self.filepath = self.convert_to_wave(filepath)
         self.samplerate, self.data = wavfile.read(self.filepath)
+        self.file_format = "WAV"
 
     # Convert audio to WAV format
     def convert_to_wave(self, filepath):
@@ -69,7 +70,7 @@ class Model:
         return rt60
     
     # Calculate resonant frequency
-    def calculate_resnonant_frequency(self):
+    def calculate_resonant_frequency(self):
         """
         Find the dominant resonant frequency of the loaded audio data.
         """
@@ -93,7 +94,7 @@ class Model:
 
             raise ValueError("No audio data loaded to visualize.")
         
-        time = np.linespace(0, len(self.data) / self.samplerate, num=len(self.data))
+        time = np.linspace(0, len(self.data) / self.samplerate, num=len(self.data))
         plt.figure()
         plt.plot(time, self.data)
         plt.title("Waveform")
@@ -117,7 +118,7 @@ class Model:
         # Iterate through bands, calculate RT60, and add to list
         for band in bands:
 
-            band_data = self.data
+            band_data = self.bandpass_filter(self.data, band[0], band[1])
             rt60s.append(self.calculate_rt60())
 
         plt.bar([f"{band[0]}-{band[1]} Hz" for band in bands], rt60s)

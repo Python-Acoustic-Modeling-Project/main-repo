@@ -9,14 +9,20 @@ import librosa
 class Controller:
 
     # Class initialization
-    def __init__(self, root):
+    def __init__(self, root, model):
         """
         Initialize the controller, linking the model and the view.
         """
 
-        self.model = Model()
-        self.view = View(root, self)
+        self.root = root
+        self.model = model
+        self.view = None
 
+    # Set view
+    def set_view(self, view):
+
+        self.view = view
+    
     # Load file
     def load_file(self, filepath):
         """
@@ -43,7 +49,7 @@ class Controller:
         if self.model.file_format != "WAV":
             
             # Convert file to WAV
-            new_file = self.model.convert_to_wave()
+            new_file = self.model.convert_to_wave(self.model.filepath)
 
             # Load newly-converted WAV audio file
             self.model.load_audio(new_file)
@@ -60,11 +66,12 @@ class Controller:
             raise ValueError("No audio data loaded. Please load an audio file first.")
         
         # Perform analysis
-        results = {}  # create empty dictionary
-        results["length"] = self.model.get_audio_length()
-        results["rt60"] = self.model.calaculate_rt60()
-        results["resonant_frequeny"] = self.model.get_resonant_frequency()
-        results["waveform"] = self.model.audio_data
+        results = {
+            "length": len(self.model.data) / self.model.samplerate,
+            "rt60": self.model.calculate_rt60(),
+            "resonant_frequency": self.model.calculate_resonant_frequency(),
+            "waveform": self.model.data
+        }
 
         # Return results
         return results

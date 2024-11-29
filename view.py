@@ -14,10 +14,8 @@ class View:
         """
 
         # Set instance variables
-        self.controller = controller
         self.root = root
-        self.root.geometry("900x700")
-        self.root.resizable(False, False)
+        self.controller = controller
 
         # Title
         tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(pady=10)
@@ -58,7 +56,7 @@ class View:
         self.resonant_label.grid(row=0, column=2, padx=10)
 
         # Action buttons
-        self.analyze_button = tk.Button(root, text="Analyze Audio", command=self.analyze_data, font=("Arial", 12), state="disabled")
+        self.analyze_button = tk.Button(root, text="Analyze Audio", command=self.controller.analyze_data, font=("Arial", 12), state="disabled")
         self.analyze_button.pack(pady=10)
 
     # Load file
@@ -67,14 +65,20 @@ class View:
         Handles the file import process. Calls the controller to load the file and updates the view.
         """
 
-        filepath = filedialog.askopenfilename(filetypes=[("Audio Files", "*.wav *.mp3 *.flac"), ("All Files", "*.*")])
+        filepath = filedialog.askopenfilename(filetypes=[("Audio Files", "*.wav *.mp3 *.m4a"), ("All Files", "*.*")])
 
         if filepath:
 
-            self.controller.load_file(filepath)
-            self.file_label.config(text=f"File: {filepath.split('/')[-1]}", fg="black")
-            self.clean_button.config(state="normal")
-            self.analyze_button.config(state="normal")
+            try:  # attempt to do
+
+                self.controller.load_file(filepath)
+                self.file_label.config(text=f"File: {filepath.split('/')[-1]}", fg="black")
+                self.clean_button.config(state="normal")
+                self.analyze_button.config(state="normal")
+            
+            except FileNotFoundError as error:
+
+                messagebox.showerror(f"Error: {str(error)}")
 
     # Clean data
     def clean_data(self):
@@ -84,6 +88,7 @@ class View:
 
         try:  # attempt to do
             
+            self.controller.clean_data()
             results = self.controller.analyze_data()
             self.update_results(results)
             self.update_visualization(results["waveform"])
