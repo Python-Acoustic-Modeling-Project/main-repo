@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
+import pygame
 
 # View class
 class View:
@@ -16,6 +17,7 @@ class View:
         # Set instance variables
         self.root = root
         self.controller = controller
+        self.is_playing = False
 
         # Title
         tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(pady=10)
@@ -59,6 +61,13 @@ class View:
         self.analyze_button = tk.Button(root, text="Analyze Audio", command=self.controller.analyze_data, font=("Arial", 12), state="disabled")
         self.analyze_button.pack(pady=10)
 
+        # Play/stop button
+        self.play_button = tk.Button(root, text="Play", command=self.toggle_play)
+        self.play_button.pack(pady=10)
+
+        # Initialize pygame mixer
+        pygame.mixer.init()
+
     # Load file
     def load_file(self):
         """
@@ -75,11 +84,28 @@ class View:
                 self.file_label.config(text=f"File: {filepath.split('/')[-1]}", fg="black")
                 self.clean_button.config(state="normal")
                 self.analyze_button.config(state="normal")
+                self.play_button.config(state="normal")
             
             except FileNotFoundError as error:
 
                 messagebox.showerror(f"Error: {str(error)}")
 
+    # Toggle play
+    def toggle_play(self):
+        """
+        Calls the controller to play or stop the audio.
+        """
+
+        if self.play_button['text'] == 'Play':
+
+            self.controller.play_audio()
+            self.play_button.config(text="Stop")
+
+        else:
+
+            self.controller.stop_audio()
+            self.play_button.config(text="Play")
+    
     # Clean data
     def clean_data(self):
         """

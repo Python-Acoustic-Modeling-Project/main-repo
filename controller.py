@@ -1,5 +1,6 @@
 # Include libraries
 import os
+import pygame
 from model import Model
 from view import View
 import soundfile as sf
@@ -14,9 +15,14 @@ class Controller:
         Initialize the controller, linking the model and the view.
         """
 
+        # Set instance variables
         self.root = root
         self.model = model
         self.view = None
+        self.is_playing = False
+
+        # Initalize pygame mixer for audio playback
+        pygame.mixer.init()
 
     # Set view
     def set_view(self, view):
@@ -75,3 +81,26 @@ class Controller:
 
         # Return results
         return results
+    
+    # Play audio
+    def play_audio(self):
+        """
+        Play the audio through pygame.
+        """
+
+        if not self.is_playing:  # if audio is not playing
+
+            pygame.mixer.music.load(self.model.filepath)
+            pygame.mixer.music.play()
+            self.is_playing = True
+
+    # Stop audio
+    def stop_audio(self):
+        """
+        Stop the audio if it is playing.
+        """
+
+        if self.is_playing:  # if audio is playing
+
+            pygame.mixer.music.stop()
+            self.is_playing = False
