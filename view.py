@@ -186,7 +186,8 @@ class View:
 
     def update_combined_rt60(self):
         self.ax4.clear()
-        self.ax4.plot(title="Combined RT60")
+        self.ax4.plot()
+        self.ax4.set_title("RT60 Combined")
         self.ax4.set_xlabel("Time: Seconds")
         self.ax4.set_ylabel("Power: dB")
         rt60_low = self.results["rt60_low"]
