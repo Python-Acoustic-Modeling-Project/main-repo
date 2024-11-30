@@ -32,7 +32,7 @@ class View:
         self.import_button.pack(pady=10)
 
         # Cleaning tools selection
-        self.clean_button = tk.Button(root, text="Clean Data", command=self.clean_data, font=("Arial", 12), state="disabled")
+        self.clean_button = tk.Button(root, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
         self.clean_button.pack(pady=10)
 
         # Tabs for data display
