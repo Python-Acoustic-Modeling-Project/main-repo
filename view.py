@@ -19,6 +19,7 @@ class View:
         self.root = root
         self.controller = controller
         self.is_playing = False
+        self.index = 0
 
         # Title
         tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(pady=10)
@@ -44,9 +45,7 @@ class View:
         self.tab6 = ttk.Frame(self.tabControl)
 
         self.tabControl.add(self.tab1, text='Waveform')
-        self.tabControl.add(self.tab2, text='RT60 Low')
-        self.tabControl.add(self.tab3, text='RT60 Mid')
-        self.tabControl.add(self.tab4, text='RT60 High')
+        self.tabControl.add(self.tab2, text='RT60 Cycle Graphs')
         self.tabControl.add(self.tab5, text='Combined RT60')
         self.tabControl.add(self.tab6, text='Tab 6')
 
@@ -63,7 +62,7 @@ class View:
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.pack()
 
-        # Visualization selection: RT60 Low
+        # Visualization selection: RT60 Cycle graph
         self.fig1, self.ax1 = plt.subplots(figsize=(8, 4))
         self.ax1.set_title("Audio Data Visualization")
         self.ax1.set_xlabel("Time")
@@ -71,24 +70,6 @@ class View:
         self.canvas1 = FigureCanvasTkAgg(self.fig1, master=self.tab2)
         self.canvas_widget1 = self.canvas1.get_tk_widget()
         self.canvas_widget1.pack()
-
-        # Visualization selection: RT60 Medium
-        self.fig2, self.ax2 = plt.subplots(figsize=(8, 4))
-        self.ax2.set_title("Audio Data Visualization")
-        self.ax2.set_xlabel("Time")
-        self.ax2.set_ylabel("Amplitude")
-        self.canvas2 = FigureCanvasTkAgg(self.fig2, master=self.tab3)
-        self.canvas_widget2 = self.canvas2.get_tk_widget()
-        self.canvas_widget2.pack()
-
-        # Visualization selection: RT60 High
-        self.fig3, self.ax3 = plt.subplots(figsize=(8, 4))
-        self.ax3.set_title("Audio Data Visualization")
-        self.ax3.set_xlabel("Time")
-        self.ax3.set_ylabel("Amplitude")
-        self.canvas3 = FigureCanvasTkAgg(self.fig3, master=self.tab4)
-        self.canvas_widget3 = self.canvas3.get_tk_widget()
-        self.canvas_widget3.pack()
 
         # Visualization selection: RT60 High
         self.fig4, self.ax4 = plt.subplots(figsize=(8, 4))
@@ -98,6 +79,9 @@ class View:
         self.canvas4 = FigureCanvasTkAgg(self.fig4, master=self.tab5)
         self.canvas_widget4 = self.canvas4.get_tk_widget()
         self.canvas_widget4.pack()
+
+        self.rt60_button = tk.Button(self.tab2, text="Cycle RT60 Graphs", command=self.cycle_rt60)
+        self.rt60_button.pack()
 
         # Analysis Results section
         self.results_frame = tk.Frame(root)
@@ -111,10 +95,6 @@ class View:
 
         self.resonant_label = tk.Label(self.results_frame, text="Resonant Frequency: -- Hz", font=("Arial", 12))
         self.resonant_label.grid(row=0, column=2, padx=10)
-
-        # Action buttons
-        self.analyze_button = tk.Button(root, text="Analyze Audio", command=self.controller.analyze_data, font=("Arial", 12), state="disabled")
-        self.analyze_button.pack(pady=10)
 
         # Play/stop button
         self.play_button = tk.Button(root, text="Play", command=self.toggle_play)
@@ -139,7 +119,6 @@ class View:
                 self.controller.load_file(filepath)
                 self.file_label.config(text=f"File: {filepath.split('/')[-1]}", fg="black")
                 self.clean_button.config(state="normal")
-                self.analyze_button.config(state="normal")
                 self.play_button.config(state="normal")
             
             except FileNotFoundError as error:
@@ -171,13 +150,11 @@ class View:
         try:  # attempt to do
             
             self.controller.clean_data()
-            results = self.controller.analyze_data()
-            self.update_results(results)
-            self.update_visualization(results["waveform"])
-            self.update_rt60_low(results["rt60_low"])
-            self.update_rt60_mid(results["rt60_mid"])
-            self.update_rt60_high(results["rt60_high"])
-            self.update_combined_rt60(results["rt60_low"], results["rt60_mid"], results["rt60_high"])
+            self.results = self.controller.analyze_data()
+            self.update_results(self.results)
+            self.update_visualization(self.results["waveform"])
+            self.cycle_rt60()
+            self.update_combined_rt60()
 
         except Exception as error:  # except if an exception arises
 
@@ -207,55 +184,14 @@ class View:
         self.ax.set_ylabel("Amplitude")
         self.canvas.draw()
 
-    # Update visualization
-    def update_rt60_low(self, rt60_low):
-        """
-        Updates the rt60_low visualization.
-        """
-
-        self.ax1.clear()
-        self.ax1.plot(title = "RT60 Low")
-        self.ax1.set_xlabel("Time: Seconds")
-        self.ax1.set_ylabel("Power: dB")
-        self.ax1.plot(rt60_low[0], rt60_low[1],linewidth=1, alpha=0.7, color='#004bc6')
-        self.ax1.plot(rt60_low[2], rt60_low[5], 'ro')
-        self.ax1.plot(rt60_low[3], rt60_low[6], 'go')
-        self.ax1.plot(rt60_low[4], rt60_low[7], 'yo')
-        self.canvas1.draw()
-
-    def update_rt60_mid(self, rt60_mid):
-        """
-        Updates the rt60_mid visualization.
-        """
-        self.ax2.clear()
-        self.ax2.plot(title = "RT60 Mid")
-        self.ax2.set_xlabel("Time: Seconds")
-        self.ax2.set_ylabel("Power: dB")
-        self.ax2.plot(rt60_mid[0], rt60_mid[1],linewidth=1, alpha=0.7, color='#004bc6')
-        self.ax2.plot(rt60_mid[2], rt60_mid[5], 'ro')
-        self.ax2.plot(rt60_mid[3], rt60_mid[6], 'go')
-        self.ax2.plot(rt60_mid[4], rt60_mid[7], 'yo')
-        self.canvas2.draw()
-
-    def update_rt60_high(self, rt60_high):
-        """
-        Updates the rt60_high visualization.
-        """
-        self.ax3.clear()
-        self.ax3.plot(title = "RT60 High")
-        self.ax3.set_xlabel("Time: Seconds")
-        self.ax3.set_ylabel("Power: dB")
-        self.ax3.plot(rt60_high[0], rt60_high[1],linewidth=1, alpha=0.7, color='#004bc6')
-        self.ax3.plot(rt60_high[2], rt60_high[5], 'ro')
-        self.ax3.plot(rt60_high[3], rt60_high[6], 'go')
-        self.ax3.plot(rt60_high[4], rt60_high[7], 'yo')
-        self.canvas3.draw()
-
-    def update_combined_rt60(self, rt60_low, rt60_mid, rt60_high):
+    def update_combined_rt60(self):
         self.ax4.clear()
         self.ax4.plot(title="Combined RT60")
         self.ax4.set_xlabel("Time: Seconds")
         self.ax4.set_ylabel("Power: dB")
+        rt60_low = self.results["rt60_low"]
+        rt60_mid = self.results["rt60_mid"]
+        rt60_high = self.results["rt60_high"]
         self.ax4.plot(rt60_low[0], rt60_low[1], linewidth=1, alpha=0.7)
         self.ax4.plot(rt60_low[2], rt60_low[5], 'ro')
         self.ax4.plot(rt60_low[3], rt60_low[6], 'go')
@@ -270,3 +206,40 @@ class View:
         self.ax4.plot(rt60_high[4], rt60_high[7], 'yo')
 
         self.canvas4.draw()
+
+    def cycle_rt60(self):
+        try:
+            self.ax1.clear()
+
+            self.ax1.set_xlabel("Time: Seconds")
+            self.ax1.set_ylabel("Power: dB")
+
+            # determine which rt60 plot to show
+            if self.index%3 == 0:
+                self.ax1.set_title("RT60 Low")
+                rt60_data = self.results["rt60_low"]
+            elif self.index%3 == 1:
+                self.ax1.set_title("RT60 Mid")
+                rt60_data = self.results["rt60_mid"]
+            elif self.index%3 == 2:
+                self.ax1.set_title("RT60 High")
+                rt60_data = self.results["rt60_high"]
+
+            self.ax1.plot(title="RT60 High")
+            self.ax1.plot(rt60_data[0], rt60_data[1], linewidth=1, alpha=0.7, color='#004bc6')
+            self.ax1.plot(rt60_data[2], rt60_data[5], 'ro')
+            self.ax1.plot(rt60_data[3], rt60_data[6], 'go')
+            self.ax1.plot(rt60_data[4], rt60_data[7], 'yo')
+
+            if self.index%3 == 0:
+                self.ax1.plot(title="RT60 Low")
+            elif self.index%3 == 1:
+                self.ax1.plot(title="RT60 Mid")
+            elif self.index%3 == 2:
+                self.ax1.plot(title="RT60 High")
+
+            self.canvas1.draw()
+            self.index += 1
+            self.index = self.index%3
+        except:
+            pass
