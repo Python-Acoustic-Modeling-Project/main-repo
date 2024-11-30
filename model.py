@@ -16,6 +16,7 @@ class Model:
         self.filepath = None
         self.samplerate = None
         self.data = None
+        self.rt60_added = 0.0
 
     # Load audio
     def load_audio(self, filepath):
@@ -52,9 +53,8 @@ class Model:
 
             raise ValueError("No audio data loaded to analyze.")
         
-        energy = np.cumsum(self.data[::-1] ** 2)[::-1]
-        max_energy = energy[0]
-        rt60 = np.where(energy < max_energy * 0.001)[0][0] / self.samplerate
+        rt60= self.rt60_added / 3
+        self.rt60_added = 0
         return rt60
     
     # Calculate resonant frequency
@@ -79,11 +79,15 @@ class Model:
         return x
 
     def frequency_check(self, value):
-        global target_frequency
         target_frequency = self.find_target_frequency(value)
         index_of_frequency = np.where(self.freq == target_frequency)[0][0]
         data_for_frequency = self.spectrum[index_of_frequency]
-        data_in_db_fun = 10 * np.log10(data_for_frequency)
+
+        try:
+            data_in_db_fun = 10 * np.log10(data_for_frequency)
+        except:
+            pass
+
         return data_in_db_fun
 
     def find_nearest_value(self,array, value):
@@ -114,6 +118,11 @@ class Model:
         max_25 = max_dB - 25
         max_25 = self.find_nearest_value(sliced_array, max_25)
         idx_max_25 = np.where(data_in_db == max_25)
+
+        # rt60 calculation at current frequency
+        rt20 = (self.t[idx_max_5] - self.t[idx_max_25])[0]
+        rt60 = abs(rt20 * 3)
+        self.rt60_added += rt60
 
         # List to be returned storing the information needed to plot
         plot_info = [self.t, data_in_db, self.t[idx_max], self.t[idx_max_5], self.t[idx_max_25],\
