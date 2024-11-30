@@ -81,7 +81,7 @@ class View:
         self.canvas_widget4.pack()
 
         self.rt60_button = tk.Button(self.tab2, text="Cycle RT60 Graphs", command=self.cycle_rt60)
-        self.rt60_button.pack()
+        self.rt60_button.pack(pady=8)
 
         # Analysis Results section
         self.results_frame = tk.Frame(root)
