@@ -34,13 +34,17 @@ class View:
         self.file_label = tk.Label(root, text="No file selected", fg="gray", font=("Arial", 12))
         self.file_label.pack(anchor=tk.CENTER, pady=5)
 
+        # Frame to hold buttons horizontally
+        self.buttons_frame = tk.Frame(root)
+        self.buttons_frame.pack(anchor=tk.CENTER, pady=10)
+
         # File import selection
-        self.import_button = tk.Button(root, text="Import Audio File", command=self.load_file, font=("Arial", 12))
-        self.import_button.pack(anchor=tk.CENTER, pady = 10)
+        self.import_button = tk.Button(self.buttons_frame, text="Import Audio File", command=self.load_file, font=("Arial", 12))
+        self.import_button.pack(side=tk.LEFT, padx=10)
 
         # Cleaning tools selection
-        self.clean_button = tk.Button(root, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
-        self.clean_button.pack(anchor=tk.CENTER, pady=5)
+        self.clean_button = tk.Button(self.buttons_frame, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
+        self.clean_button.pack(side=tk.LEFT, padx=10)
 
         # Visualization Title
         tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).pack(anchor=tk.CENTER, pady = 10)
