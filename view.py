@@ -26,19 +26,19 @@ class View:
         self.index = 0
 
         # Title
-        tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(anchor=tk.CENTER)
+        tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(anchor=tk.CENTER, pady=10)
 
         # File import selection
 
         self.file_label = tk.Label(root, text="No file selected", fg="gray", font=("Arial", 12))
-        self.file_label.pack(anchor=tk.CENTER, pady = 10)
+        self.file_label.pack(anchor=tk.CENTER, pady=5)
 
         self.import_button = tk.Button(root, text="Import Audio File", command=self.load_file, font=("Arial", 12))
         self.import_button.pack(anchor=tk.CENTER, pady = 10)
 
         # Cleaning tools selection
         self.clean_button = tk.Button(root, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
-        self.clean_button.pack(anchor=tk.CENTER, pady = 10)
+        self.clean_button.pack(anchor=tk.CENTER, pady=5)
 
         # Visualization Title
         tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).pack(anchor=tk.CENTER, pady = 10)
@@ -96,13 +96,13 @@ class View:
         self.length_label = tk.Label(self.results_frame, text="Length: --- seconds", font=("Arial", 12))
         self.length_label.grid(row=0, column=0, padx=10)
 
-        self.rt60_label = tk.Label(self.results_frame, text="RT60: -- seconds", font=("Arial", 12))
+        self.rt60_label = tk.Label(self.results_frame, text="RT60: --- seconds", font=("Arial", 12))
         self.rt60_label.grid(row=0, column=1, padx=10)
 
-        self.difference_label = tk.Label(self.results_frame, text="RT60 .05 Difference: -- seconds", font=("Arial", 12))
+        self.difference_label = tk.Label(self.results_frame, text="RT60 .05 Difference: --- seconds", font=("Arial", 12))
         self.difference_label.grid(row=0, column=2, padx=10)
 
-        self.resonant_label = tk.Label(self.results_frame, text="Resonant Frequency: -- Hz", font=("Arial", 12))
+        self.resonant_label = tk.Label(self.results_frame, text="Resonant Frequency: --- Hz", font=("Arial", 12))
         self.resonant_label.grid(row=0, column=3, padx=10)
 
         # Play/stop button
