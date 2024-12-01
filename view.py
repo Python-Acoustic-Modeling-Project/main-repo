@@ -55,7 +55,7 @@ class View:
 
         self.tabControl.pack()
 
-        self.fig, self.ax = plt.subplots(figsize=(7, 4))
+        self.fig, self.ax = plt.subplots(figsize=(9, 4))
         self.ax.set_title("Audio Data Visualization")
         self.ax.set_xlabel("Time: Seconds")
         self.ax.set_ylabel("Amplitude")
@@ -65,7 +65,7 @@ class View:
         self.canvas_widget.pack()
 
         # Visualization selection: RT60 Cycle graph
-        self.fig1, self.ax1 = plt.subplots(figsize=(7, 4))
+        self.fig1, self.ax1 = plt.subplots(figsize=(9, 4))
         self.ax1.set_title("RT60")
         self.ax1.set_xlabel("Time: Seconds")
         self.ax1.set_ylabel("Power: dB")
@@ -81,7 +81,7 @@ class View:
         self.rt60_combined_button.grid(row = 1, column = 3, pady = 10)
 
         # Visualization selection: Intensity
-        self.fig5, self.ax5 = plt.subplots(figsize=(7, 4))
+        self.fig5, self.ax5 = plt.subplots(figsize=(9, 4))
         self.ax5.set_title("Intensity")
         self.ax5.set_xlabel("Time: Seconds")
         self.ax5.set_ylabel("Frequency: Hertz")
