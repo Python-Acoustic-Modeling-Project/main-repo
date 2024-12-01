@@ -13,13 +13,15 @@ import pygame
 class View:
 
     # Class initialization
-    def __init__(self, root, controller):
+    def __init__(self, controller):
         """
         Initialize the GUI view for the audio analysis application.
         """
 
         # Set instance variables
-        self.root = root
+        self.root = tk.Tk()
+        self.root.minsize(800, 800)
+        self.root.title("SPIDAM Audio Analysis Tool")
         self.controller = controller
         self.is_playing = False
         self.index = 0
@@ -28,14 +30,14 @@ class View:
         self.file_analyzed = False  # keeps track of if audio file has been analyzed yet
 
         # Title
-        tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(anchor=tk.CENTER, pady=10)
+        tk.Label(self.root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(anchor=tk.CENTER, pady=10)
 
         # File import status text
-        self.file_label = tk.Label(root, text="No file selected", fg="gray", font=("Arial", 12))
+        self.file_label = tk.Label(self.root, text="No file selected", fg="gray", font=("Arial", 12))
         self.file_label.pack(anchor=tk.CENTER, pady=5)
 
         # Frame to hold buttons horizontally
-        self.buttons_frame = tk.Frame(root)
+        self.buttons_frame = tk.Frame(self.root)
         self.buttons_frame.pack(anchor=tk.CENTER, pady=10)
 
         # File import selection
@@ -47,10 +49,10 @@ class View:
         self.clean_button.pack(side=tk.LEFT, padx=10)
 
         # Visualization Title
-        tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).pack(anchor=tk.CENTER, pady = 10)
+        tk.Label(self.root, text="Visualizations", font=("Arial", 16, "bold")).pack(anchor=tk.CENTER, pady = 10)
 
         # Tabs for data display
-        self.tabControl = ttk.Notebook(root)
+        self.tabControl = ttk.Notebook(self.root)
         self.tab1 = ttk.Frame(self.tabControl)
         self.tab2 = ttk.Frame(self.tabControl)
         self.tab6 = ttk.Frame(self.tabControl)
@@ -96,7 +98,7 @@ class View:
         self.canvas_widget5.pack()
 
         # Analysis Results section
-        self.results_frame = tk.Frame(root)
+        self.results_frame = tk.Frame(self.root)
         self.results_frame.pack(anchor=tk.CENTER,pady=10)
 
         self.length_label = tk.Label(self.results_frame, text="Length: --- seconds", font=("Arial", 12))
@@ -112,7 +114,7 @@ class View:
         self.resonant_label.grid(row=0, column=3, padx=10)
 
         # Play/stop button
-        self.play_button = tk.Button(root, text="Play", command=self.toggle_play, font=("Arial", 12))
+        self.play_button = tk.Button(self.root, text="Play", command=self.toggle_play, font=("Arial", 12))
         self.play_button.pack(pady=10)
 
         # Status bar
@@ -129,6 +131,8 @@ class View:
 
         # Initialize pygame mixer
         pygame.mixer.init()
+
+        self.root.mainloop()
 
     # Update status message
     def update_status(self, message):

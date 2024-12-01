@@ -11,21 +11,13 @@ def main():
     Initializes the model, view, and controller before starting the application.
     """
 
-    # Creates main application window
-    root = tk.Tk()
-    root.minsize(800,800)
-    root.title("SPIDAM Audio Analysis Tool")
-
     # Initialize the MVC components
     model = Model()
-    controller = Controller(root, model)
-    view = View(root, controller)
+    controller = Controller(model)
+    view = View(controller)
 
     # Set the view in the controller
     controller.set_view(view)
-
-    # Run mainloop to start the application
-    root.mainloop()
 
 # Execute program
 if __name__ == "__main__":

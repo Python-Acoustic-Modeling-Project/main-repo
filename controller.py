@@ -6,13 +6,12 @@ import pygame
 class Controller:
 
     # Class initialization
-    def __init__(self, root, model):
+    def __init__(self, model):
         """
         Initialize the controller, linking the model and the view.
         """
 
         # Set instance variables
-        self.root = root
         self.model = model
         self.view = None
         self.is_playing = False
