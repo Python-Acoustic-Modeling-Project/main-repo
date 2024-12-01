@@ -70,12 +70,14 @@ class Model:
         peak_idx = np.argmax(spectrum)
         return freqs[peak_idx]
 
+    # Finds target frequency
     def find_target_frequency(self, limit):
         for x in self.freq:
             if x > limit:
                 break
         return x
 
+    # Checks frequency
     def frequency_check(self, value):
         target_frequency = self.find_target_frequency(value)
         index_of_frequency = np.where(self.freq == target_frequency)[0][0]
@@ -88,11 +90,13 @@ class Model:
 
         return data_in_db_fun
 
+    # Find nearest value
     def find_nearest_value(self,array, value):
         array = np.asarray(array)
         idx = (np.abs(array - value)).argmin()
         return array[idx]
 
+    # Data for RT60 visualization
     def rt60_visualization(self, value):
         """
         Find the data need for the visualization of the rt60 value at different frequencies.
