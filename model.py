@@ -1,9 +1,7 @@
 # Import libraries
 import librosa
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.signal import find_peaks, butter, lfilter
 from scipy.io import wavfile
 import soundfile as sf
 
@@ -125,7 +123,6 @@ class Model:
         self.rt60_added += rt60
 
         # List to be returned storing the information needed to plot
-        plot_info = [self.t, data_in_db, self.t[idx_max], self.t[idx_max_5], self.t[idx_max_25],\
-                    data_in_db[idx_max], data_in_db[idx_max_5], data_in_db[idx_max_25]]
+        plot_info = [self.t, data_in_db, self.t[idx_max], self.t[idx_max_5], self.t[idx_max_25], data_in_db[idx_max], data_in_db[idx_max_5], data_in_db[idx_max_25]]
         return plot_info
 
