@@ -20,6 +20,7 @@ class View:
         self.controller = controller
         self.is_playing = False
         self.index = 0
+        self.index = 0
 
         # Title
         tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(pady=10)
@@ -43,6 +44,7 @@ class View:
         self.tab6 = ttk.Frame(self.tabControl)
 
         self.tabControl.add(self.tab1, text='Waveform')
+        self.tabControl.add(self.tab2, text='RT60 Cycle Graphs')
         self.tabControl.add(self.tab2, text='RT60 Cycle Graphs')
         self.tabControl.add(self.tab5, text='Combined RT60')
         self.tabControl.add(self.tab6, text='Tab 6')
@@ -190,8 +192,13 @@ class View:
         self.ax4.clear()
         self.ax4.plot()
         self.ax4.set_title("RT60 Combined")
+        self.ax4.plot()
+        self.ax4.set_title("RT60 Combined")
         self.ax4.set_xlabel("Time: Seconds")
         self.ax4.set_ylabel("Power: dB")
+        rt60_low = self.results["rt60_low"]
+        rt60_mid = self.results["rt60_mid"]
+        rt60_high = self.results["rt60_high"]
         rt60_low = self.results["rt60_low"]
         rt60_mid = self.results["rt60_mid"]
         rt60_high = self.results["rt60_high"]
@@ -231,8 +238,8 @@ class View:
             self.ax1.plot(title="RT60 High")
             self.ax1.plot(rt60_data[0], rt60_data[1], linewidth=1, alpha=0.7, color='#004bc6')
             self.ax1.plot(rt60_data[2], rt60_data[5], 'ro')
-            self.ax1.plot(rt60_data[3], rt60_data[6], 'yo')
-            self.ax1.plot(rt60_data[4], rt60_data[7], 'go')
+            self.ax1.plot(rt60_data[3], rt60_data[6], 'go')
+            self.ax1.plot(rt60_data[4], rt60_data[7], 'yo')
 
             if self.index%3 == 0:
                 self.ax1.plot(title="RT60 Low")
