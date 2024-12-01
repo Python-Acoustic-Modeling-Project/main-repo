@@ -20,6 +20,7 @@ class View:
         self.controller = controller
         self.is_playing = False
         self.index = 0
+        self.index = 0
 
         # Title
         tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(pady=10)
@@ -32,19 +33,18 @@ class View:
         self.import_button.pack(pady=10)
 
         # Cleaning tools selection
-        self.clean_button = tk.Button(root, text="Clean Data", command=self.clean_data, font=("Arial", 12), state="disabled")
+        self.clean_button = tk.Button(root, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
         self.clean_button.pack(pady=10)
 
         # Tabs for data display
         self.tabControl = ttk.Notebook(root)
         self.tab1 = ttk.Frame(self.tabControl)
         self.tab2 = ttk.Frame(self.tabControl)
-        self.tab3 = ttk.Frame(self.tabControl)
-        self.tab4 = ttk.Frame(self.tabControl)
         self.tab5 = ttk.Frame(self.tabControl)
         self.tab6 = ttk.Frame(self.tabControl)
 
         self.tabControl.add(self.tab1, text='Waveform')
+        self.tabControl.add(self.tab2, text='RT60 Cycle Graphs')
         self.tabControl.add(self.tab2, text='RT60 Cycle Graphs')
         self.tabControl.add(self.tab5, text='Combined RT60')
         self.tabControl.add(self.tab6, text='Tab 6')
@@ -93,8 +93,11 @@ class View:
         self.rt60_label = tk.Label(self.results_frame, text="RT60: -- seconds", font=("Arial", 12))
         self.rt60_label.grid(row=0, column=1, padx=10)
 
+        self.difference_label = tk.Label(self.results_frame, text="RT60 .05 Difference: -- seconds", font=("Arial", 12))
+        self.difference_label.grid(row=0, column=2, padx=10)
+
         self.resonant_label = tk.Label(self.results_frame, text="Resonant Frequency: -- Hz", font=("Arial", 12))
-        self.resonant_label.grid(row=0, column=2, padx=10)
+        self.resonant_label.grid(row=0, column=3, padx=10)
 
         # Play/stop button
         self.play_button = tk.Button(root, text="Play", command=self.toggle_play)
@@ -168,6 +171,7 @@ class View:
 
         self.length_label.config(text=f"Length: {results['length']:.2f} seconds")
         self.rt60_label.config(text=f"RT60: {results['rt60']:.2f} seconds")
+        self.difference_label.config(text=f"RT60 .5 Difference: {results['rt60'] - 0.5:.2f} seconds")
         self.resonant_label.config(text=f"Resonant Frequency: {results['resonant_frequency']:.2f} Hz")
 
     # Update visualization
@@ -188,23 +192,28 @@ class View:
         self.ax4.clear()
         self.ax4.plot()
         self.ax4.set_title("RT60 Combined")
+        self.ax4.plot()
+        self.ax4.set_title("RT60 Combined")
         self.ax4.set_xlabel("Time: Seconds")
         self.ax4.set_ylabel("Power: dB")
         rt60_low = self.results["rt60_low"]
         rt60_mid = self.results["rt60_mid"]
         rt60_high = self.results["rt60_high"]
+        rt60_low = self.results["rt60_low"]
+        rt60_mid = self.results["rt60_mid"]
+        rt60_high = self.results["rt60_high"]
         self.ax4.plot(rt60_low[0], rt60_low[1], linewidth=1, alpha=0.7)
         self.ax4.plot(rt60_low[2], rt60_low[5], 'ro')
-        self.ax4.plot(rt60_low[3], rt60_low[6], 'go')
-        self.ax4.plot(rt60_low[4], rt60_low[7], 'yo')
+        self.ax4.plot(rt60_low[3], rt60_low[6], 'yo')
+        self.ax4.plot(rt60_low[4], rt60_low[7], 'go')
         self.ax4.plot(rt60_mid[0], rt60_mid[1], linewidth=1, alpha=0.7)
         self.ax4.plot(rt60_mid[2], rt60_mid[5], 'ro')
-        self.ax4.plot(rt60_mid[3], rt60_mid[6], 'go')
-        self.ax4.plot(rt60_mid[4], rt60_mid[7], 'yo')
+        self.ax4.plot(rt60_mid[3], rt60_mid[6], 'yo')
+        self.ax4.plot(rt60_mid[4], rt60_mid[7], 'go')
         self.ax4.plot(rt60_high[0], rt60_high[1], linewidth=1, alpha=0.7)
         self.ax4.plot(rt60_high[2], rt60_high[5], 'ro')
-        self.ax4.plot(rt60_high[3], rt60_high[6], 'go')
-        self.ax4.plot(rt60_high[4], rt60_high[7], 'yo')
+        self.ax4.plot(rt60_high[3], rt60_high[6], 'yo')
+        self.ax4.plot(rt60_high[4], rt60_high[7], 'go')
 
         self.canvas4.draw()
 
