@@ -76,6 +76,7 @@ class Controller:
             "rt60_mid": self.model.rt60_visualization(1000),
             "rt60_high": self.model.rt60_visualization(5000),
             "rt60": self.model.calculate_rt60(),
+            "Intensity": (self.model.data, self.model.samplerate),
         }
 
         # Return results

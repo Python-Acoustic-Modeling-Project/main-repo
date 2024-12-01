@@ -367,6 +367,5 @@ class View:
         self.ax5.set_title("Intensity")
         self.ax5.set_xlabel("Time: Seconds")
         self.ax5.set_ylabel("Frequency: Hz")
-        sample_rate, data = wavfile.read(self.results)
-        spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
+        plt.specgram(self.results["Intensity"][0], Fs=self.results["Intensity"][1], NFFT=1024, cmap=plt.get_cmap('autumn_r'))
         self.canvas5.draw()
