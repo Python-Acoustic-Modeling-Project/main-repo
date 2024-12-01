@@ -24,15 +24,17 @@ class View:
         self.is_playing = False
         self.index = 0
         self.index = 0
+        self.file_imported = False  # keeps track of if audio file has been imported yet
+        self.file_analyzed = False  # keeps track of if audio file has been analyzed yet
 
         # Title
         tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(anchor=tk.CENTER, pady=10)
 
-        # File import selection
-
+        # File import status text
         self.file_label = tk.Label(root, text="No file selected", fg="gray", font=("Arial", 12))
         self.file_label.pack(anchor=tk.CENTER, pady=5)
 
+        # File import selection
         self.import_button = tk.Button(root, text="Import Audio File", command=self.load_file, font=("Arial", 12))
         self.import_button.pack(anchor=tk.CENTER, pady = 10)
 
@@ -109,10 +111,30 @@ class View:
         self.play_button = tk.Button(root, text="Play", command=self.toggle_play, font=("Arial", 12))
         self.play_button.pack(pady=10)
 
+        # Status bar
+        self.status_frame = ttk.Frame(self.root, relief="sunken", padding="2 2 2 2")
+        self.status_frame.pack()
+
+        # StringVar for status message which will be shown within status bar
+        self.status_msg = tk.StringVar()
+        self.update_status("Import audio file to start analyzing.")  # set default status message to be shown when application launches
+
+        # Status label
+        self.status = ttk.Label(self.status_frame, textvariable=self.status_msg, anchor="w")
+        self.status.pack()
 
         # Initialize pygame mixer
         pygame.mixer.init()
 
+    # Update status message
+    def update_status(self, message):
+        """
+        Updates the status message.
+        """
+        
+        # Update status instance variable to input
+        self.status_msg.set(message)
+    
     # Load file
     def load_file(self):
         """
@@ -125,14 +147,35 @@ class View:
 
             try:  # attempt to do
 
+                # Set boolean check for file importing to false (if not already; in case new audio file is being imported)
+                self.file_imported = False
+                
+                # Update status message
+                self.update_status("Awaiting file selection...")
+                
+                # Load file after selection
                 self.controller.load_file(filepath)
+
+                # Store name of file
+                self.file_name = filepath.split('/')[-1]
+
+                # Display name of file in file label
                 self.file_label.config(text=f"File: {filepath.split('/')[-1]}", fg="black")
+
+                # Set boolean check for file importing to true
+                self.file_imported = True
+
+                # Update status message displaying file has been loaded
+                self.update_status(f"File \"{self.file_name}\" loaded sucessfully.")
+
+                # Enable analyze audio and play buttons
                 self.clean_button.config(state="normal")
                 self.play_button.config(state="normal")
             
-            except FileNotFoundError as error:
+            except FileNotFoundError as error:  # except if the file is not found (a FileNotFound error exception arises)
 
-                messagebox.showerror(f"Error: {str(error)}")
+                # Display error message in status bar
+                self.update_status(f"Error: {str(error)}")
 
     # Toggle play
     def toggle_play(self):
@@ -140,14 +183,21 @@ class View:
         Calls the controller to play or stop the audio.
         """
 
-        if self.play_button['text'] == 'Play':
+        # Control audio playback depending on state of play button
+        if self.play_button['text'] == 'Play':  # if play button is currently in Play mode
 
+            # Start audio playback
             self.controller.play_audio()
+
+            # Change text on button to "Stop"
             self.play_button.config(text="Stop")
 
-        else:
-
+        else:  # if play button is not currently in Play mode
+            
+            # Stop audio playback
             self.controller.stop_audio()
+
+            # Change text on button back to "Play"
             self.play_button.config(text="Play")
     
     # Clean data
@@ -158,6 +208,13 @@ class View:
 
         try:  # attempt to do
             
+            # Set boolean check for analyzing audio to false (if not already; in case new audio is imported)
+            self.file_analyzed = False
+            
+            # Update status message to indicate audio is being analyzed
+            self.update_status("Analyzing audio file...")
+            
+            # Analyze audio and update results
             self.controller.clean_data()
             self.results = self.controller.analyze_data()
             self.update_results(self.results)
@@ -165,9 +222,15 @@ class View:
             self.cycle_rt60()
             self.update_combined_rt60()
 
+            # Set boolean check for analyzing audio to true
+            self.file_analyzed = True
+
+            # Update status message to indicate audio has been successfully analyzed
+            self.update_status(f"File \"{self.file_name}\" successfully analyzed.")
+
         except Exception as error:  # except if an exception arises
 
-            messagebox.showerror(f"Error: {error}")
+            self.update_status(f"Error: {error}")
 
     # Update results
     def update_results(self, results):
@@ -194,46 +257,76 @@ class View:
         self.ax.set_ylabel("Amplitude")
         self.canvas.draw()
 
+    def audio_status(self):
 
+        # Update status message indicating that graph cannot yet be generated since audio has not been imported
+        if((self.file_imported is False)):  # if file has not yet been imported
+
+            # Update status message indicating that audio has not yet been imported
+            self.update_status("Audio not yet imported, graph cannot be generated.")
+
+        if((self.file_imported is True) and (self.file_analyzed is False)):  # if file has been imported, but not analyzed
+
+            # Update status message indicating that imported audio has not yet been analyzed
+            self.update_status("Imported audio not yet analyzed, graph cannot be generated.")
+
+    # Plot combined RT60 graphs
     def update_combined_rt60(self):
+        
+        # Clear the current plot
         self.ax1.clear()
 
+        # Update plot title and axis titles
         self.ax1.set_title("RT60 Combined")
         self.ax1.set_xlabel("Time: Seconds")
         self.ax1.set_ylabel("Power: dB")
 
-        rt60_low = self.results["rt60_low"]
-        rt60_mid = self.results["rt60_mid"]
-        rt60_high = self.results["rt60_high"]
+        # Separate RT60 results into low, mid, and high; and then plot those results
+        try:  # atttempt to do
+            
+            rt60_low = self.results["rt60_low"]
+            rt60_mid = self.results["rt60_mid"]
+            rt60_high = self.results["rt60_high"]
 
-        #RT60 low
-        self.ax1.plot(rt60_low[0], rt60_low[1], linewidth=1, alpha=0.7)
-        self.ax1.plot(rt60_low[2], rt60_low[5], 'ro')
-        self.ax1.plot(rt60_low[3], rt60_low[6], 'yo')
-        self.ax1.plot(rt60_low[4], rt60_low[7], 'go')
+            # RT60 low
+            self.ax1.plot(rt60_low[0], rt60_low[1], linewidth=1, alpha=0.7)
+            self.ax1.plot(rt60_low[2], rt60_low[5], 'ro')
+            self.ax1.plot(rt60_low[3], rt60_low[6], 'yo')
+            self.ax1.plot(rt60_low[4], rt60_low[7], 'go')
 
-        #RT60 mid
-        self.ax1.plot(rt60_mid[0], rt60_mid[1], linewidth=1, alpha=0.7)
-        self.ax1.plot(rt60_mid[2], rt60_mid[5], 'ro')
-        self.ax1.plot(rt60_mid[3], rt60_mid[6], 'yo')
-        self.ax1.plot(rt60_mid[4], rt60_mid[7], 'go')
+            # RT60 mid
+            self.ax1.plot(rt60_mid[0], rt60_mid[1], linewidth=1, alpha=0.7)
+            self.ax1.plot(rt60_mid[2], rt60_mid[5], 'ro')
+            self.ax1.plot(rt60_mid[3], rt60_mid[6], 'yo')
+            self.ax1.plot(rt60_mid[4], rt60_mid[7], 'go')
 
-        #RT60 high
-        self.ax1.plot(rt60_high[0], rt60_high[1], linewidth=1, alpha=0.7)
-        self.ax1.plot(rt60_high[2], rt60_high[5], 'ro')
-        self.ax1.plot(rt60_high[3], rt60_high[6], 'yo')
-        self.ax1.plot(rt60_high[4], rt60_high[7], 'go')
+            # RT60 high
+            self.ax1.plot(rt60_high[0], rt60_high[1], linewidth=1, alpha=0.7)
+            self.ax1.plot(rt60_high[2], rt60_high[5], 'ro')
+            self.ax1.plot(rt60_high[3], rt60_high[6], 'yo')
+            self.ax1.plot(rt60_high[4], rt60_high[7], 'go')
 
+        except AttributeError:  # except if an AttributeError exception arises (most notably because the audio has not yet been loaded for RT60 results to exist)
+
+            # Print status message to status bar depending on current state of audio importing/analyzing
+            self.audio_status()
+
+        # Draw the plot with these results
         self.canvas1.draw()
 
+    # Cycle through low, mid, and high RT60 graphs
     def cycle_rt60(self):
         try:
+            
+            # Clear current plot
             self.ax1.clear()
 
+            # Update plot title and axis titles
+            self.ax1.set_title("RT60")
             self.ax1.set_xlabel("Time: Seconds")
             self.ax1.set_ylabel("Power: dB")
 
-            # determine which rt60 plot to show
+            # Determine which rt60 plot to show
             if self.index%3 == 1:
                 self.ax1.set_title("RT60 Low")
                 rt60_data = self.results["rt60_low"]
@@ -250,14 +343,15 @@ class View:
                 self.ax1.plot(rt60_data[3], rt60_data[6], 'go')
                 self.ax1.plot(rt60_data[4], rt60_data[7], 'yo')
 
-
             self.canvas1.draw()
 
             self.index += 1
             self.index = self.index%3
 
         except:
-            pass
+            
+            # Print status message to status bar depending on current state of audio importing/analyzing
+            self.audio_status()
 
     def update_intensity(self):
         self.ax5.clear()
