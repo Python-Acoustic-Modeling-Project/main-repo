@@ -1,10 +1,6 @@
 # Include libraries
 import os
 import pygame
-from model import Model
-from view import View
-import soundfile as sf
-import librosa
 
 # Controller class
 class Controller:
@@ -21,7 +17,7 @@ class Controller:
         self.view = None
         self.is_playing = False
 
-        # Initalize pygame mixer for audio playback
+        # Initialize pygame mixer for audio playback
         pygame.mixer.init()
 
     # Set view
