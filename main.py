@@ -7,11 +7,11 @@ from model import Model
 # Main function
 def main():
     """
-    Entry point for the audio analysis application.
-    Intializes the model, view, and controller.
+    Entry point for the SPIDAM Audio Analysis Tool.
+    Initializes the model, view, and controller before starting the application.
     """
 
-    # Create the main application window
+    # Creates main application window
     root = tk.Tk()
     root.title("SPIDAM Audio Analysis Tool")
 
@@ -23,11 +23,9 @@ def main():
     # Set the view in the controller
     controller.set_view(view)
 
-    # Start the application
+    # Run mainloop to start the application
     root.mainloop()
 
 # Execute program
 if __name__ == "__main__":
-
-    # Run main function
     main()
