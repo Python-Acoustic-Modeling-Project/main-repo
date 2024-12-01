@@ -24,18 +24,18 @@ class View:
         self.index = 0
 
         # Title
-        tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(pady=10)
+        tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(anchor=tk.CENTER)
 
         # File import selection
         self.file_label = tk.Label(root, text="No file selected", fg="gray", font=("Arial", 12))
-        self.file_label.pack()
+        self.file_label.pack(anchor=tk.CENTER)
 
         self.import_button = tk.Button(root, text="Import Audio File", command=self.load_file, font=("Arial", 12))
-        self.import_button.pack(pady=10)
+        self.import_button.place(anchor=tk.W, y=630, x=35)
 
         # Cleaning tools selection
         self.clean_button = tk.Button(root, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
-        self.clean_button.pack(pady=10)
+        self.clean_button.place(anchor=tk.W, y=670, x=35)
 
         # Tabs for data display
         self.tabControl = ttk.Notebook(root)
@@ -47,21 +47,21 @@ class View:
         self.tabControl.add(self.tab2, text='RT60 Cycle Graphs')
         self.tabControl.add(self.tab6, text='Intensity Graph')
 
-        self.tabControl.pack(expand=1, fill="both")
+        self.tabControl.place(x=15, y=100)
 
         # Visualization selection: Waveform
-        tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).pack(pady=10)
+        tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).place(x=250, y=575)
 
-        self.fig, self.ax = plt.subplots(figsize=(8, 4))
+        self.fig, self.ax = plt.subplots(figsize=(6, 4))
         self.ax.set_title("Audio Data Visualization")
         self.ax.set_xlabel("Time")
         self.ax.set_ylabel("Amplitude")
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.tab1)
         self.canvas_widget = self.canvas.get_tk_widget()
-        self.canvas_widget.pack()
+        self.canvas_widget.grid(row = 1, column = 1)
 
         # Visualization selection: RT60 Cycle graph
-        self.fig1, self.ax1 = plt.subplots(figsize=(8, 4))
+        self.fig1, self.ax1 = plt.subplots(figsize=(6, 4))
         self.ax1.set_title("Audio Data Visualization")
         self.ax1.set_xlabel("Time")
         self.ax1.set_ylabel("Amplitude")
@@ -73,7 +73,7 @@ class View:
         self.rt60_button.pack(pady=8)
 
         # Visualization selection: Intensity
-        self.fig5, self.ax5 = plt.subplots(figsize=(8, 4))
+        self.fig5, self.ax5 = plt.subplots(figsize=(6, 4))
         self.ax5.set_title("Intensity")
         self.ax5.set_xlabel("Time (s)")
         self.ax5.set_ylabel("Frequency (Hz)")
@@ -86,7 +86,7 @@ class View:
         self.results_frame.pack(pady=10)
 
         self.length_label = tk.Label(self.results_frame, text="Length: --- seconds", font=("Arial", 12))
-        self.length_label.grid(row=0, column=0, padx=10)
+        self.length_label.grid(row=3, column=0, padx=10)
 
         self.rt60_label = tk.Label(self.results_frame, text="RT60: -- seconds", font=("Arial", 12))
         self.rt60_label.grid(row=0, column=1, padx=10)
@@ -99,7 +99,7 @@ class View:
 
         # Play/stop button
         self.play_button = tk.Button(root, text="Play", command=self.toggle_play)
-        self.play_button.pack(pady=10)
+        self.play_button.pack(anchor=tk.N)
 
 
         # Initialize pygame mixer
