@@ -31,11 +31,11 @@ class View:
         self.file_label.pack(anchor=tk.CENTER)
 
         self.import_button = tk.Button(root, text="Import Audio File", command=self.load_file, font=("Arial", 12))
-        self.import_button.place(anchor=tk.W, y=630, x=35)
+        self.import_button.place(anchor=tk.W, y=630, x=210)
 
         # Cleaning tools selection
         self.clean_button = tk.Button(root, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
-        self.clean_button.place(anchor=tk.W, y=670, x=35)
+        self.clean_button.place(anchor=tk.W, y=630, x=400)
 
         # Tabs for data display
         self.tabControl = ttk.Notebook(root)
@@ -50,33 +50,37 @@ class View:
         self.tabControl.place(x=15, y=100)
 
         # Visualization selection: Waveform
-        tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).place(x=250, y=575)
+        tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).place(x=300, y=575)
 
-        self.fig, self.ax = plt.subplots(figsize=(6, 4))
+        self.fig, self.ax = plt.subplots(figsize=(7, 4))
         self.ax.set_title("Audio Data Visualization")
-        self.ax.set_xlabel("Time")
+        self.ax.set_xlabel("Time: Seconds")
         self.ax.set_ylabel("Amplitude")
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.tab1)
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.grid(row = 1, column = 1)
 
         # Visualization selection: RT60 Cycle graph
-        self.fig1, self.ax1 = plt.subplots(figsize=(6, 4))
+        self.fig1, self.ax1 = plt.subplots(figsize=(7, 4))
         self.ax1.set_title("Audio Data Visualization")
-        self.ax1.set_xlabel("Time")
+        self.ax1.set_xlabel("Time: Seconds")
         self.ax1.set_ylabel("Amplitude")
         self.canvas1 = FigureCanvasTkAgg(self.fig1, master=self.tab2)
         self.canvas_widget1 = self.canvas1.get_tk_widget()
         self.canvas_widget1.pack()
 
-        self.rt60_button = tk.Button(self.tab2, text="Cycle RT60 Graphs", command=self.cycle_rt60)
-        self.rt60_button.pack(pady=8)
+        self.rt60_button = tk.Button(self.tab2, text="Cycle RT60 Graphs", command=self.cycle_rt60, font=("Arial", 10))
+        self.rt60_button.place(x=225, y=409)
+
+        # Combined RT60 graph button
+        self.rt60_combined_button = tk.Button(self.tab2, text="Combined RT60 Graph", command=self.update_combined_rt60, font=("Arial", 10))
+        self.rt60_combined_button.pack(side="right", padx=190, pady=8)
 
         # Visualization selection: Intensity
-        self.fig5, self.ax5 = plt.subplots(figsize=(6, 4))
+        self.fig5, self.ax5 = plt.subplots(figsize=(7, 4))
         self.ax5.set_title("Intensity")
-        self.ax5.set_xlabel("Time (s)")
-        self.ax5.set_ylabel("Frequency (Hz)")
+        self.ax5.set_xlabel("Time: Seconds")
+        self.ax5.set_ylabel("Frequency: Hertz")
         self.canvas5 = FigureCanvasTkAgg(self.fig5, master=self.tab6)
         self.canvas_widget5 = self.canvas5.get_tk_widget()
         self.canvas_widget5.pack()
@@ -85,21 +89,21 @@ class View:
         self.results_frame = tk.Frame(root)
         self.results_frame.pack(pady=10)
 
-        self.length_label = tk.Label(self.results_frame, text="Length: --- seconds", font=("Arial", 12))
-        self.length_label.grid(row=3, column=0, padx=10)
+        self.length_label = tk.Label(self.root, text="Length: --- seconds", font=("Arial", 12))
+        self.length_label.place(x=730, y=120)
 
-        self.rt60_label = tk.Label(self.results_frame, text="RT60: -- seconds", font=("Arial", 12))
-        self.rt60_label.grid(row=0, column=1, padx=10)
+        self.rt60_label = tk.Label(self.root, text="RT60: -- seconds", font=("Arial", 12))
+        self.rt60_label.place(x=730, y=150)
 
-        self.difference_label = tk.Label(self.results_frame, text="RT60 .05 Difference: -- seconds", font=("Arial", 12))
-        self.difference_label.grid(row=0, column=2, padx=10)
+        self.difference_label = tk.Label(self.root, text="RT60 .05 Difference: -- seconds", font=("Arial", 12))
+        self.difference_label.place(x=730, y=180)
 
-        self.resonant_label = tk.Label(self.results_frame, text="Resonant Frequency: -- Hz", font=("Arial", 12))
-        self.resonant_label.grid(row=0, column=3, padx=10)
+        self.resonant_label = tk.Label(self.root, text="Resonant Frequency: -- Hz", font=("Arial", 12))
+        self.resonant_label.place(x=730, y=210)
 
         # Play/stop button
-        self.play_button = tk.Button(root, text="Play", command=self.toggle_play)
-        self.play_button.pack(anchor=tk.N)
+        self.play_button = tk.Button(root, text="Play", command=self.toggle_play, font=("Arial", 12))
+        self.play_button.place(anchor=tk.W, y=670, x=210)
 
 
         # Initialize pygame mixer
@@ -182,7 +186,7 @@ class View:
         self.ax.plot(waveform, label="Waveform")
         self.ax.legend()
         self.ax.set_title("Audio Waveform")
-        self.ax.set_xlabel("Time")
+        self.ax.set_xlabel("Time: Seconds")
         self.ax.set_ylabel("Amplitude")
         self.canvas.draw()
 
@@ -226,19 +230,15 @@ class View:
             self.ax1.set_ylabel("Power: dB")
 
             # determine which rt60 plot to show
-            if self.index%4 == 1:
+            if self.index%3 == 0:
                 self.ax1.set_title("RT60 Low")
                 rt60_data = self.results["rt60_low"]
-            elif self.index%4 == 2:
+            elif self.index%3 == 1:
                 self.ax1.set_title("RT60 Mid")
                 rt60_data = self.results["rt60_mid"]
-            elif self.index%4 == 3:
+            elif self.index%3 == 2:
                 self.ax1.set_title("RT60 High")
                 rt60_data = self.results["rt60_high"]
-            elif self.index%4 == 0:
-                self.ax1.set_title("RT60 Combined")
-                rt60_data = None
-                self.update_combined_rt60()
 
             if rt60_data:
                 self.ax1.plot(rt60_data[0], rt60_data[1], linewidth=1, alpha=0.7, color='#004bc6')
@@ -250,7 +250,7 @@ class View:
             self.canvas1.draw()
 
             self.index += 1
-            self.index = self.index%4
+            self.index = self.index%3
 
         except:
             pass
@@ -260,7 +260,7 @@ class View:
         self.ax5.set_title("Intensity")
         self.ax5.set_xlabel("Time: Seconds")
         self.ax5.set_ylabel("Frequency: Hz")
-
         sample_rate, data = wavfile.read(self.results)
         spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
         cbar = plt.colorbar(im)
+        self.canvas5.draw()
