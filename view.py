@@ -47,7 +47,7 @@ class View:
         self.tabControl.add(self.tab2, text='RT60 Cycle Graphs')
         self.tabControl.add(self.tab2, text='RT60 Cycle Graphs')
         self.tabControl.add(self.tab5, text='Combined RT60')
-        self.tabControl.add(self.tab6, text='Tab 6')
+        self.tabControl.add(self.tab6, text='Intensity Graph')
 
         self.tabControl.pack(expand=1, fill="both")
 
