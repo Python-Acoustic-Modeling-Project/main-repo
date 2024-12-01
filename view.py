@@ -230,13 +230,13 @@ class View:
             self.ax1.set_ylabel("Power: dB")
 
             # determine which rt60 plot to show
-            if self.index%3 == 0:
+            if self.index%3 == 1:
                 self.ax1.set_title("RT60 Low")
                 rt60_data = self.results["rt60_low"]
-            elif self.index%3 == 1:
+            elif self.index%3 == 2:
                 self.ax1.set_title("RT60 Mid")
                 rt60_data = self.results["rt60_mid"]
-            elif self.index%3 == 2:
+            elif self.index%3 == 0:
                 self.ax1.set_title("RT60 High")
                 rt60_data = self.results["rt60_high"]
 
