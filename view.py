@@ -196,6 +196,9 @@ class View:
 
 
     def update_combined_rt60(self):
+        """
+        This function updates the combined RT60 graph.
+        """
         self.ax1.clear()
 
         self.ax1.set_title("RT60 Combined")
@@ -227,6 +230,9 @@ class View:
         self.canvas1.draw()
 
     def cycle_rt60(self):
+        """
+        This function iterates through the 3 rt60 graphs LOW, MID, HIgh
+        """
         try:
             self.ax1.clear()
 
@@ -244,15 +250,16 @@ class View:
                 self.ax1.set_title("RT60 High")
                 rt60_data = self.results["rt60_high"]
 
+            #update the graph with the corresponding data
             if rt60_data:
                 self.ax1.plot(rt60_data[0], rt60_data[1], linewidth=1, alpha=0.7, color='#004bc6')
                 self.ax1.plot(rt60_data[2], rt60_data[5], 'ro')  # Plot points for RT60 data
                 self.ax1.plot(rt60_data[3], rt60_data[6], 'go')
                 self.ax1.plot(rt60_data[4], rt60_data[7], 'yo')
 
-
             self.canvas1.draw()
 
+            #Update the index by one and keep it in the 1, 2, 3 scheme
             self.index += 1
             self.index = self.index%3
 
@@ -260,6 +267,9 @@ class View:
             pass
 
     def update_intensity(self):
+        """
+        Updates the intensity graphs.
+        """
         self.ax5.clear()
         self.ax5.set_title("Intensity")
         self.ax5.set_xlabel("Time: Seconds")
