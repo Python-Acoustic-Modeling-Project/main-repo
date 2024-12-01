@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from scipy.io import wavfile
 import matplotlib.pyplot as plt
 import pygame
 
@@ -82,6 +83,15 @@ class View:
 
         self.rt60_button = tk.Button(self.tab2, text="Cycle RT60 Graphs", command=self.cycle_rt60)
         self.rt60_button.pack(pady=8)
+
+        # Visualization selection: Intensity
+        self.fig5, self.ax5 = plt.subplots(figsize=(8, 4))
+        self.ax5.set_title("Intensity")
+        self.ax5.set_xlabel("Time (s)")
+        self.ax5.set_ylabel("Frequency (Hz)")
+        self.canvas5 = FigureCanvasTkAgg(self.fig5, master=self.tab6)
+        self.canvas_widget5 = self.canvas5.get_tk_widget()
+        self.canvas_widget5.pack()
 
         # Analysis Results section
         self.results_frame = tk.Frame(root)
@@ -253,3 +263,13 @@ class View:
             self.index = self.index%3
         except:
             pass
+
+    def update_intensity(self):
+        self.ax5.clear()
+        self.ax5.set_title("Intensity")
+        self.ax5.set_xlabel("Time: Seconds")
+        self.ax5.set_ylabel("Frequency: Hz")
+
+        sample_rate, data = wavfile.read(self.results)
+        spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
+        cbar = plt.colorbar(im)
