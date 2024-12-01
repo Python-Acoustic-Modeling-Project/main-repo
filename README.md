@@ -26,9 +26,9 @@ Prerequisites:
 Steps:
 
 1. Clone the repository:
-   + ``` git clone https://github.com/Python-Acoustic-Modeling-Project/main-repo.git```
+   + ```git clone https://github.com/Python-Acoustic-Modeling-Project/main-repo.git```
 2. Navigate to the project directory:
-   + ``` cd main-repo```
+   + ```cd main-repo```
 3. Install dependencies:
    + ```pip install -r requirements.txt```
 
