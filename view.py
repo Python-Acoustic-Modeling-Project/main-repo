@@ -3,8 +3,6 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.pyplot import colorbar
-from scipy.io import wavfile
 from scipy.io import wavfile
 import matplotlib.pyplot as plt
 import pygame
@@ -33,12 +31,17 @@ class View:
         self.file_label = tk.Label(root, text="No file selected", fg="gray", font=("Arial", 12))
         self.file_label.pack(anchor=tk.CENTER, pady=5)
 
-        self.import_button = tk.Button(root, text="Import Audio File", command=self.load_file, font=("Arial", 12))
-        self.import_button.pack(anchor=tk.CENTER, pady = 10)
+        # Create a frame to hold the buttons horizontally
+        self.buttons_frame = tk.Frame(root)
+        self.buttons_frame.pack(anchor=tk.CENTER, pady=10)
 
-        # Cleaning tools selection
-        self.clean_button = tk.Button(root, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
-        self.clean_button.pack(anchor=tk.CENTER, pady=5)
+        # Import button packed horizontally inside the frame
+        self.import_button = tk.Button(self.buttons_frame, text="Import Audio File", command=self.load_file, font=("Arial", 12))
+        self.import_button.pack(side=tk.LEFT, padx=10)
+
+        # Clean button packed horizontally inside the frame
+        self.clean_button = tk.Button(self.buttons_frame, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
+        self.clean_button.pack(side=tk.LEFT, padx=10)
 
         # Visualization Title
         tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).pack(anchor=tk.CENTER, pady = 10)
