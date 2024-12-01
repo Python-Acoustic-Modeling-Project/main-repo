@@ -71,7 +71,7 @@ class View:
         self.ax1.set_ylabel("Power: dB")
         self.canvas1 = FigureCanvasTkAgg(self.fig1, master=self.tab2)
         self.canvas_widget1 = self.canvas1.get_tk_widget()
-        self.canvas_widget1.grid(row = 0, column = 0, columnspan = 6, pady = 10)
+        self.canvas_widget1.grid(row = 0, column = 0, columnspan = 6)
 
         self.rt60_button = tk.Button(self.tab2, text="Cycle RT60 Graphs", command=self.cycle_rt60, font=("Arial", 10))
         self.rt60_button.grid(row = 1, column = 2, pady = 10)
