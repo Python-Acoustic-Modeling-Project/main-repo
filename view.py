@@ -198,28 +198,31 @@ class View:
         self.ax.set_ylabel("Amplitude")
         self.canvas.draw()
 
+
     def update_combined_rt60(self):
         self.ax4.clear()
-        self.ax4.plot()
-        self.ax4.set_title("RT60 Combined")
-        self.ax4.plot()
+
         self.ax4.set_title("RT60 Combined")
         self.ax4.set_xlabel("Time: Seconds")
         self.ax4.set_ylabel("Power: dB")
+
         rt60_low = self.results["rt60_low"]
         rt60_mid = self.results["rt60_mid"]
         rt60_high = self.results["rt60_high"]
-        rt60_low = self.results["rt60_low"]
-        rt60_mid = self.results["rt60_mid"]
-        rt60_high = self.results["rt60_high"]
+
+        #RT60 low
         self.ax4.plot(rt60_low[0], rt60_low[1], linewidth=1, alpha=0.7)
         self.ax4.plot(rt60_low[2], rt60_low[5], 'ro')
         self.ax4.plot(rt60_low[3], rt60_low[6], 'yo')
         self.ax4.plot(rt60_low[4], rt60_low[7], 'go')
+
+        #RT60 mid
         self.ax4.plot(rt60_mid[0], rt60_mid[1], linewidth=1, alpha=0.7)
         self.ax4.plot(rt60_mid[2], rt60_mid[5], 'ro')
         self.ax4.plot(rt60_mid[3], rt60_mid[6], 'yo')
         self.ax4.plot(rt60_mid[4], rt60_mid[7], 'go')
+
+        #RT60 high
         self.ax4.plot(rt60_high[0], rt60_high[1], linewidth=1, alpha=0.7)
         self.ax4.plot(rt60_high[2], rt60_high[5], 'ro')
         self.ax4.plot(rt60_high[3], rt60_high[6], 'yo')
@@ -235,32 +238,33 @@ class View:
             self.ax1.set_ylabel("Power: dB")
 
             # determine which rt60 plot to show
-            if self.index%3 == 0:
+            if self.index%4 == 0:
                 self.ax1.set_title("RT60 Low")
                 rt60_data = self.results["rt60_low"]
-            elif self.index%3 == 1:
+            elif self.index%4 == 1:
                 self.ax1.set_title("RT60 Mid")
                 rt60_data = self.results["rt60_mid"]
-            elif self.index%3 == 2:
+            elif self.index%4 == 2:
                 self.ax1.set_title("RT60 High")
                 rt60_data = self.results["rt60_high"]
+            elif self.index%4 == 3:
+                self.ax1.set_title("RT60 Combined")
+                rt60_data = None
 
-            self.ax1.plot(title="RT60 High")
-            self.ax1.plot(rt60_data[0], rt60_data[1], linewidth=1, alpha=0.7, color='#004bc6')
-            self.ax1.plot(rt60_data[2], rt60_data[5], 'ro')
-            self.ax1.plot(rt60_data[3], rt60_data[6], 'go')
-            self.ax1.plot(rt60_data[4], rt60_data[7], 'yo')
+            if rt60_data:
+                self.ax1.plot(rt60_data[0], rt60_data[1], linewidth=1, alpha=0.7, color='#004bc6')
+                self.ax1.plot(rt60_data[2], rt60_data[5], 'ro')  # Plot points for RT60 data
+                self.ax1.plot(rt60_data[3], rt60_data[6], 'go')
+                self.ax1.plot(rt60_data[4], rt60_data[7], 'yo')
 
-            if self.index%3 == 0:
-                self.ax1.plot(title="RT60 Low")
-            elif self.index%3 == 1:
-                self.ax1.plot(title="RT60 Mid")
-            elif self.index%3 == 2:
-                self.ax1.plot(title="RT60 High")
+            if self.index % 4 == 3:
+                self.update_combined_rt60()
 
             self.canvas1.draw()
+
             self.index += 1
-            self.index = self.index%3
+            self.index = self.index%4
+
         except:
             pass
 
