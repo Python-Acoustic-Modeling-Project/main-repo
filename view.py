@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.pyplot import colorbar
 from scipy.io import wavfile
 from scipy.io import wavfile
 import matplotlib.pyplot as plt
@@ -28,15 +29,16 @@ class View:
         tk.Label(root, text="SPIDAM Audio Analysis Tool", font=("Arial", 20, "bold")).pack(anchor=tk.CENTER)
 
         # File import selection
+
         self.file_label = tk.Label(root, text="No file selected", fg="gray", font=("Arial", 12))
-        self.file_label.pack(anchor=tk.CENTER)
+        self.file_label.pack(anchor=tk.CENTER, pady = 5)
 
         self.import_button = tk.Button(root, text="Import Audio File", command=self.load_file, font=("Arial", 12))
-        self.import_button.place(anchor=tk.W, y=630, x=210)
+        self.import_button.pack(anchor=tk.CENTER, pady = 5)
 
         # Cleaning tools selection
         self.clean_button = tk.Button(root, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
-        self.clean_button.place(anchor=tk.W, y=630, x=400)
+        self.clean_button.pack(anchor=tk.CENTER, pady = 5)
 
         # Tabs for data display
         self.tabControl = ttk.Notebook(root)
@@ -48,10 +50,10 @@ class View:
         self.tabControl.add(self.tab2, text='RT60 Cycle Graphs')
         self.tabControl.add(self.tab6, text='Intensity Graph')
 
-        self.tabControl.place(x=15, y=100)
+        self.tabControl.place(x=15, y=200)
 
         # Visualization selection: Waveform
-        tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).place(x=300, y=575)
+        tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).place(x=347, y=170)
 
         self.fig, self.ax = plt.subplots(figsize=(7, 4))
         self.ax.set_title("Audio Data Visualization")
@@ -63,9 +65,9 @@ class View:
 
         # Visualization selection: RT60 Cycle graph
         self.fig1, self.ax1 = plt.subplots(figsize=(7, 4))
-        self.ax1.set_title("Audio Data Visualization")
+        self.ax1.set_title("RT60")
         self.ax1.set_xlabel("Time: Seconds")
-        self.ax1.set_ylabel("Amplitude")
+        self.ax1.set_ylabel("Power: dB")
         self.canvas1 = FigureCanvasTkAgg(self.fig1, master=self.tab2)
         self.canvas_widget1 = self.canvas1.get_tk_widget()
         self.canvas_widget1.pack()
@@ -91,20 +93,20 @@ class View:
         self.results_frame.pack(pady=10)
 
         self.length_label = tk.Label(self.root, text="Length: --- seconds", font=("Arial", 12))
-        self.length_label.place(x=730, y=120)
+        self.length_label.place(x=60, y=700)
 
         self.rt60_label = tk.Label(self.root, text="RT60: -- seconds", font=("Arial", 12))
-        self.rt60_label.place(x=730, y=150)
+        self.rt60_label.place(x=200, y=700)
 
         self.difference_label = tk.Label(self.root, text="RT60 .05 Difference: -- seconds", font=("Arial", 12))
-        self.difference_label.place(x=730, y=180)
+        self.difference_label.place(x=330, y=700)
 
         self.resonant_label = tk.Label(self.root, text="Resonant Frequency: -- Hz", font=("Arial", 12))
-        self.resonant_label.place(x=730, y=210)
+        self.resonant_label.place(x=560, y=700)
 
         # Play/stop button
         self.play_button = tk.Button(root, text="Play", command=self.toggle_play, font=("Arial", 12))
-        self.play_button.place(anchor=tk.W, y=670, x=210)
+        self.play_button.place(anchor=tk.W, y=750, x=375)
 
 
         # Initialize pygame mixer
@@ -263,5 +265,4 @@ class View:
         self.ax5.set_ylabel("Frequency: Hz")
         sample_rate, data = wavfile.read(self.results)
         spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
-        cbar = plt.colorbar(im)
         self.canvas5.draw()

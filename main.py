@@ -13,7 +13,7 @@ def main():
 
     # Create the main application window
     root = tk.Tk()
-    root.minsize(1000,800)
+    root.minsize(800,800)
     root.title("SPIDAM Audio Analysis Tool")
 
     # Initialize the MVC components
