@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter import filedialog, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from scipy.io import wavfile
+from scipy.io import wavfile
 import matplotlib.pyplot as plt
 import pygame
 
