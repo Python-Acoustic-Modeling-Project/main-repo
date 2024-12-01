@@ -31,14 +31,17 @@ class View:
         # File import selection
 
         self.file_label = tk.Label(root, text="No file selected", fg="gray", font=("Arial", 12))
-        self.file_label.pack(anchor=tk.CENTER, pady = 5)
+        self.file_label.pack(anchor=tk.CENTER, pady = 10)
 
         self.import_button = tk.Button(root, text="Import Audio File", command=self.load_file, font=("Arial", 12))
-        self.import_button.pack(anchor=tk.CENTER, pady = 5)
+        self.import_button.pack(anchor=tk.CENTER, pady = 10)
 
         # Cleaning tools selection
         self.clean_button = tk.Button(root, text="Analyze Audio", command=self.clean_data, font=("Arial", 12), state="disabled")
-        self.clean_button.pack(anchor=tk.CENTER, pady = 5)
+        self.clean_button.pack(anchor=tk.CENTER, pady = 10)
+
+        # Visualization Title
+        tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).pack(anchor=tk.CENTER, pady = 10)
 
         # Tabs for data display
         self.tabControl = ttk.Notebook(root)
@@ -50,10 +53,7 @@ class View:
         self.tabControl.add(self.tab2, text='RT60 Cycle Graphs')
         self.tabControl.add(self.tab6, text='Intensity Graph')
 
-        self.tabControl.place(x=15, y=200)
-
-        # Visualization selection: Waveform
-        tk.Label(root, text="Visualizations", font=("Arial", 16, "bold")).place(x=347, y=170)
+        self.tabControl.pack()
 
         self.fig, self.ax = plt.subplots(figsize=(7, 4))
         self.ax.set_title("Audio Data Visualization")
@@ -62,6 +62,7 @@ class View:
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.tab1)
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.grid(row = 1, column = 1)
+        self.canvas_widget.pack()
 
         # Visualization selection: RT60 Cycle graph
         self.fig1, self.ax1 = plt.subplots(figsize=(7, 4))
@@ -70,14 +71,14 @@ class View:
         self.ax1.set_ylabel("Power: dB")
         self.canvas1 = FigureCanvasTkAgg(self.fig1, master=self.tab2)
         self.canvas_widget1 = self.canvas1.get_tk_widget()
-        self.canvas_widget1.pack()
+        self.canvas_widget1.grid(row = 0, column = 0, columnspan = 6, pady = 10)
 
         self.rt60_button = tk.Button(self.tab2, text="Cycle RT60 Graphs", command=self.cycle_rt60, font=("Arial", 10))
-        self.rt60_button.place(x=225, y=409)
+        self.rt60_button.grid(row = 1, column = 2, pady = 10)
 
         # Combined RT60 graph button
         self.rt60_combined_button = tk.Button(self.tab2, text="Combined RT60 Graph", command=self.update_combined_rt60, font=("Arial", 10))
-        self.rt60_combined_button.pack(side="right", padx=190, pady=8)
+        self.rt60_combined_button.grid(row = 1, column = 3, pady = 10)
 
         # Visualization selection: Intensity
         self.fig5, self.ax5 = plt.subplots(figsize=(7, 4))
@@ -90,23 +91,23 @@ class View:
 
         # Analysis Results section
         self.results_frame = tk.Frame(root)
-        self.results_frame.pack(pady=10)
+        self.results_frame.pack(anchor=tk.CENTER,pady=10)
 
-        self.length_label = tk.Label(self.root, text="Length: --- seconds", font=("Arial", 12))
-        self.length_label.place(x=60, y=700)
+        self.length_label = tk.Label(self.results_frame, text="Length: --- seconds", font=("Arial", 12))
+        self.length_label.grid(row=0, column=0, padx=10)
 
-        self.rt60_label = tk.Label(self.root, text="RT60: -- seconds", font=("Arial", 12))
-        self.rt60_label.place(x=200, y=700)
+        self.rt60_label = tk.Label(self.results_frame, text="RT60: -- seconds", font=("Arial", 12))
+        self.rt60_label.grid(row=0, column=1, padx=10)
 
-        self.difference_label = tk.Label(self.root, text="RT60 .05 Difference: -- seconds", font=("Arial", 12))
-        self.difference_label.place(x=330, y=700)
+        self.difference_label = tk.Label(self.results_frame, text="RT60 .05 Difference: -- seconds", font=("Arial", 12))
+        self.difference_label.grid(row=0, column=2, padx=10)
 
-        self.resonant_label = tk.Label(self.root, text="Resonant Frequency: -- Hz", font=("Arial", 12))
-        self.resonant_label.place(x=560, y=700)
+        self.resonant_label = tk.Label(self.results_frame, text="Resonant Frequency: -- Hz", font=("Arial", 12))
+        self.resonant_label.grid(row=0, column=3, padx=10)
 
         # Play/stop button
         self.play_button = tk.Button(root, text="Play", command=self.toggle_play, font=("Arial", 12))
-        self.play_button.place(anchor=tk.W, y=750, x=375)
+        self.play_button.pack(pady=10)
 
 
         # Initialize pygame mixer
