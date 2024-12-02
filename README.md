@@ -17,7 +17,7 @@ Key Features
 + Audio Playback
   + Built-in audio player to listen to the loaded sample.
 
-Installation:
+Installation
 -
 Prerequisites:
 + Python 3.8+
@@ -47,7 +47,7 @@ Limitations
 + GUI performance may vary with large audio files due to the Tkinter framework's simplicity.
 + Designed for evaluating single audio samples at a time.
 
-Contributors:
+Contributors
 -
 + Brayden Kondek
 + Pjark Sander
