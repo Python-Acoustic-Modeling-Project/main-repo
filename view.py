@@ -226,6 +226,7 @@ class View:
             self.update_visualization(self.results["waveform"])
             self.cycle_rt60()
             self.update_combined_rt60()
+            self.update_intensity()
 
             # Set boolean check for analyzing audio to true
             self.file_analyzed = True
