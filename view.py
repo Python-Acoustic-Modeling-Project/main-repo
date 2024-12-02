@@ -1,11 +1,8 @@
 # Include libraries
 import tkinter as tk
 from tkinter import ttk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.pyplot import colorbar
-from scipy.io import wavfile
-from scipy.io import wavfile
 import matplotlib.pyplot as plt
 import pygame
 
