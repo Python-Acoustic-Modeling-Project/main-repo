@@ -6,13 +6,12 @@ import pygame
 class Controller:
 
     # Class initialization
-    def __init__(self, root, model):
+    def __init__(self, model):
         """
         Initialize the controller, linking the model and the view.
         """
 
         # Set instance variables
-        self.root = root
         self.model = model
         self.view = None
         self.is_playing = False
@@ -76,6 +75,7 @@ class Controller:
             "rt60_mid": self.model.rt60_visualization(1000),
             "rt60_high": self.model.rt60_visualization(5000),
             "rt60": self.model.calculate_rt60(),
+            "Intensity": (self.model.data, self.model.samplerate),
         }
 
         # Return results

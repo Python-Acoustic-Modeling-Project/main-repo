@@ -23,8 +23,14 @@ class Model:
         Load an audio file and store the sample rate and data.
         """
         self.filepath = self.convert_to_wave(filepath)
+
         self.samplerate, self.data = wavfile.read(self.filepath)
+
+        if len(self.data.shape) > 1:
+            self.data = np.mean(self.data, axis=1)
+
         self.spectrum, self.freq, self.t, self.im = plt.specgram(self.data, Fs=self.samplerate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
+
         self.file_format = "WAV"
 
     # Convert audio to WAV format
