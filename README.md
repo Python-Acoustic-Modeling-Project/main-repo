@@ -56,15 +56,14 @@ Contributors:
 
 Screenshots
 -
-+ Upon Opening Program
-<br>
+### Upon Opening Program
   <img src="https://assets.bradykondek.com/files/spidam-project/upon-open.png" width="450" height="450">
-+ Waveform Analysis
-<br>
+
+### Waveform Analysis
   <img src="https://assets.bradykondek.com/files/spidam-project/waveform-analysis.png" width="450" height="450">
-+ Combined RT60 Graph
-<br>
+
+### Combined RT60 Graph
   <img src="https://assets.bradykondek.com/files/spidam-project/combined-rt60.png" width="450" height="450">
-+ Intensity Graph
-<br>
+
+### Intensity Graph
   <img src="https://assets.bradykondek.com/files/spidam-project/intensity-graph.png" width="450" height="450">
