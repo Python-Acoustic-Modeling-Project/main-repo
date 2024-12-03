@@ -5,8 +5,8 @@ This Python-based application provides an interactive platform for analyzing and
 Key Features
 -
 + Audio File Management
-  + Load WAV, MP3, and AAC files via a Tkinter file dialog.
-  + Automatic converstion of unsupported formats to WAV.
+  + Load WAV and MP3 files via a Tkinter file dialog.
+  + Automatic converstion of MP3 formats to WAV.
   + Handles multi-channel audio, converting it to single-channel as needed.
 + RT60 Analysis
   + Calculates RT60 values for low, mid, and high frequencies.
