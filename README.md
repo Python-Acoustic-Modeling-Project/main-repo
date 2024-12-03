@@ -6,7 +6,7 @@ Key Features
 -
 + Audio File Management
   + Load WAV and MP3 files via a Tkinter file dialog.
-  + Automatic converstion of MP3 formats to WAV.
+  + Automatic conversion of MP3 formats to WAV.
   + Handles multi-channel audio, converting it to single-channel as needed.
 + RT60 Analysis
   + Calculates RT60 values for low, mid, and high frequencies.
