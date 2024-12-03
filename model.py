@@ -11,6 +11,7 @@ class Model:
     # Class initialization method
     def __init__(self):
 
+        # Set initial instance variables
         self.filepath = None
         self.samplerate = None
         self.data = None
@@ -22,15 +23,20 @@ class Model:
         """
         Load an audio file and store the sample rate and data.
         """
+        
+        # After audio file has been loaded, convert it to WAV if not in that format already
         self.filepath = self.convert_to_wave(filepath)
 
+        # Extract samplerate and data
         self.samplerate, self.data = wavfile.read(self.filepath)
 
         if len(self.data.shape) > 1:
             self.data = np.mean(self.data, axis=1)
 
+        # Get plot data
         self.spectrum, self.freq, self.t, self.im = plt.specgram(self.data, Fs=self.samplerate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
 
+        # Set file format for audio file
         self.file_format = "WAV"
 
     # Convert audio to WAV format
@@ -38,13 +44,23 @@ class Model:
         """
         Convert an audio file to WAV format if not already in that format.
         """
+        
+        # If audio file is not already in .wav format, convert it to that
         if not filepath.lower().endswith(".wav"):  # if file format/extension is not .wav
 
+            # Load audio file and extract needed data for conversion
             y, sr = librosa.load(filepath, sr=None)
+
+            # Set new filepath of new .wav file
             output_filepath = ".".join(filepath.split(".")[:-1]) + ".wav"
+
+            # Using extracted data, write it to new .wav file
             sf.write(output_filepath, y, sr, format="wav")
+
+            # Return new converted filepath
             return output_filepath
         
+        # Return existing filepath if conversion is not needed
         return filepath
 
     # Calculate RT60 values
@@ -53,12 +69,17 @@ class Model:
         Estimate RT60 value for the currently loaded audio data.
         """
 
-        if self.data is None:
-
+        # Raise exception is no audio has been loaded yet
+        if self.data is None:  # if there is no audio data
+            
+            # Raise ValueError exception
             raise ValueError("No audio data loaded to analyze.")
         
-        rt60= self.rt60_added / 3
+        # Calculations
+        rt60 = self.rt60_added / 3
         self.rt60_added = 0
+
+        # Return calculated RT60
         return rt60
     
     # Calculate resonant frequency
@@ -67,13 +88,18 @@ class Model:
         Find the dominant resonant frequency of the loaded audio data.
         """
 
-        if self.data is None:
-
+        # Raise exception if no audio has been loaded yet
+        if self.data is None:  # if there is no audio data
+            
+            # Raise ValueError exception
             raise ValueError("No audio data loaded to analyze.")
         
+        # Extract spectrum, frequencies, and peak_idx
         spectrum = np.abs(np.fft.rfft(self.data))
         freqs = np.fft.rfftfreq(len(self.data), 1 / self.samplerate)
         peak_idx = np.argmax(spectrum)
+
+        # Return frequency data
         return freqs[peak_idx]
 
     # Finds target frequency
@@ -91,13 +117,16 @@ class Model:
 
         try:
             data_in_db_fun = 10 * np.log10(data_for_frequency)
+        
         except:
+            
             pass
 
         return data_in_db_fun
 
     # Find nearest value
     def find_nearest_value(self,array, value):
+        
         array = np.asarray(array)
         idx = (np.abs(array - value)).argmin()
         return array[idx]
@@ -134,5 +163,6 @@ class Model:
 
         # List to be returned storing the information needed to plot
         plot_info = [self.t, data_in_db, self.t[idx_max], self.t[idx_max_5], self.t[idx_max_25], data_in_db[idx_max], data_in_db[idx_max_5], data_in_db[idx_max_25]]
+        
         return plot_info
 

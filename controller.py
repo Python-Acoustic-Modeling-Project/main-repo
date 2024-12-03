@@ -22,6 +22,7 @@ class Controller:
     # Set view
     def set_view(self, view):
 
+        # Set view instance variable
         self.view = view
     
     # Load file
@@ -64,9 +65,10 @@ class Controller:
         # Ensure audio data is loaded
         if self.model.data is None:
 
+            # Raise ValueError exception
             raise ValueError("No audio data loaded. Please load an audio file first.")
         
-        # Perform analysis
+        # Perform analysis and assign results within dictionary
         results = {
             "length": len(self.model.data) / self.model.samplerate,
             "resonant_frequency": self.model.calculate_resonant_frequency(),
@@ -87,10 +89,16 @@ class Controller:
         Play the audio through pygame.
         """
 
+        # If audio is not playing, play audio
         if not self.is_playing:  # if audio is not playing
 
+            # Load audio file into mixer
             pygame.mixer.music.load(self.model.filepath)
+
+            # Start audio playback
             pygame.mixer.music.play()
+
+            # Change boolean variable state to True
             self.is_playing = True
 
     # Stop audio
@@ -99,7 +107,11 @@ class Controller:
         Stop the audio if it is playing.
         """
 
+        # If audio is playing, stop audio
         if self.is_playing:  # if audio is playing
-
+            
+            # Stop audio playback
             pygame.mixer.music.stop()
+
+            # Change boolean variable state to False
             self.is_playing = False
