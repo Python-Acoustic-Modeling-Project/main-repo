@@ -46,6 +46,7 @@ Limitations
 + Limited to environments where Python and its dependencies are properly installed.
 + GUI performance may vary with large audio files due to the Tkinter framework's simplicity.
 + Designed for evaluating single audio samples at a time.
++ Only WAV and MP3 audio files are supported.
 
 Contributors
 -
